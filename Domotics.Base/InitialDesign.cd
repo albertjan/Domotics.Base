@@ -48,6 +48,14 @@
       <Property Name="Type" />
     </ShowAsAssociation>
   </Class>
+  <Class Name="Domotics.Base.ServiceExternal">
+    <Position X="8.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceExternal.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="Domotics.Base.IExternal">
     <Position X="2.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
