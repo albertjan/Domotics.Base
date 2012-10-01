@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,9 +45,13 @@
     <Compile Include="Distributor.cs" />
     <Compile Include="IExternal.cs" />
     <Compile Include="IRuleStore.cs" />
+    <Compile Include="IState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rule.cs" />
+    <Compile Include="IRuleLogic.cs" />
+    <Compile Include="RuleLogicCompiler.cs" />
     <Compile Include="ServiceExternal.cs" />
+    <Compile Include="StateChangeDirective.cs" />
     <Compile Include="StaticRuleStore.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,29 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Domotics.Base
 {
-    public class IRuleStore
+    /// <summary>
+    /// A thing that stores rules.
+    /// </summary>
+    public interface IRuleStore
     {
-        public List<Rule> Rules
-        {
-            get
-            {
-                throw new System.NotImplementedException ();
-            }
-            set
-            {
-            }
-        }
-
         /// <summary>
-        /// Checks wether the rules make sense.
+        /// a list of rules it has.
         /// </summary>
-        public bool Check ()
-        {
-            throw new System.NotImplementedException ();
-        }
+        IEnumerable<Rule> Rules { get; set; }
     }
 }

@@ -1,43 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Domotics.Base
 {
+    /// <summary>
+    /// The connection to a piece of hardware. 
+    /// </summary>
     public class Connection
     {
-        public string Name
-        {
-            get
-            {
-                throw new System.NotImplementedException ();
-            }
-            set
-            {
-            }
-        }
+        /// <summary>
+        /// Name of the connection
+        /// </summary>
+        public string Name { get; set; }
 
-        public Guid ID
-        {
-            get
-            {
-                throw new System.NotImplementedException ();
-            }
-            set
-            {
-            }
-        }
+        /// <summary>
+        /// unique identifier
+        /// </summary>
+        public Guid ID { get; set; }
 
-        public ConnectionType Type
-        {
-            get
-            {
-                throw new System.NotImplementedException ();
-            }
-            set
-            {
-            }
-        }
+        /// <summary>
+        /// Type of connections specifies capabilities.
+        /// </summary>
+        public ConnectionType Type { get; set; }
+
+        /// <summary>
+        /// List of available states for the connection
+        /// </summary>
+        public List<IState> AvailableStates { get; set; }
+
+        /// <summary>
+        /// the current state
+        /// </summary>
+        public IState CurrentState { get; set; }
     }
 }

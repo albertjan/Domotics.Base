@@ -3,45 +3,32 @@
   <Class Name="Domotics.Base.Distributor">
     <Position X="2.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <HashCode>AAAAAAAAAAACAABAAAAAAAgAAAAAAAAAAAAAAAAACAA=</HashCode>
       <FileName>Distributor.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Externals" />
-      <Property Name="RuleStores" />
-    </ShowAsCollectionAssociation>
-  </Class>
-  <Class Name="Domotics.Base.IRuleStore">
-    <Position X="5.5" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AgAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>IRuleStore.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="Rules" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Domotics.Base.StaticRuleStore">
-    <Position X="5.5" Y="8.25" Width="1.5" />
+    <Position X="5.5" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>StaticRuleStore.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Domotics.Base.Rule">
     <Position X="5.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAEAAAAACAAACAAAAA=</HashCode>
       <FileName>Rule.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="Connections" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Domotics.Base.Connection">
     <Position X="5.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAgAAAAAAAAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAgAAAAEAAACQAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>Connection.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -51,7 +38,7 @@
   <Class Name="Domotics.Base.ServiceExternal">
     <Position X="8.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAACAABAA=</HashCode>
       <FileName>ServiceExternal.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -59,7 +46,7 @@
   <Interface Name="Domotics.Base.IExternal">
     <Position X="2.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAACAAAAA=</HashCode>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAACAAAAA=</HashCode>
       <FileName>IExternal.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
