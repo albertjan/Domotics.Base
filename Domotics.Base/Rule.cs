@@ -14,9 +14,10 @@ namespace Domotics.Base
         /// </summary>
         /// <param name="logic"></param>
         /// <param name="connections"></param>
-        public Rule(string logic, List<string> connections)
+        public Rule(string logic, IEnumerable<string> connections)
         {
             Logic = RuleLogicCompiler.Compile(logic);
+            //resolve connections and put them in the property.
         }
 
         /// <summary>

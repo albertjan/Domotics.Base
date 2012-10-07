@@ -11,6 +11,19 @@ namespace Domotics.Base
     /// </summary>
     public class StaticRuleStore : IRuleStore
     {
-        public List<Rule> Rules { get; set; }
+        public StaticRuleStore()
+        {
+            CompiledRules = new List<Rule> {new Rule("turn on//", new[] {"knopje", "lampje"})};
+        }
+
+        private List<Rule> CompiledRules { get; set; }
+        
+        public IEnumerable<Rule> Rules 
+        { 
+            get
+            {
+                return CompiledRules;
+            } 
+        }
     }
 }

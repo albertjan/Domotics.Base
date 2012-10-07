@@ -6,7 +6,7 @@ namespace Domotics.Base
     /// <summary>
     /// An external source something that handles changes and sends events when a change happens.
     /// </summary>
-    public interface IExternal
+    public interface IExternalSource
     {
 
         /// <summary>

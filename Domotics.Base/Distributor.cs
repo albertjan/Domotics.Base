@@ -8,11 +8,13 @@ namespace Domotics.Base
     /// </summary>
     public class Distributor
     {
-        public Distributor(IEnumerable<IExternal> externalSources, IEnumerable<IRuleStore> ruleStores)
+        public Distributor(IEnumerable<IExternalSource> externalSources, IEnumerable<IRuleStore> ruleStores)
         {
-            Externals = externalSources;
+            ExternalSources = externalSources;
             RuleStores = ruleStores;
-            foreach (var externalSource in externalSources)
+
+            //subscribe to all input events on all external sources.
+            foreach (var externalSource in ExternalSources)
             {
                 externalSource.Input += ExternalSourceInput;
             }
@@ -33,7 +35,7 @@ namespace Domotics.Base
             //find all the rules that say something this connection.
             foreach (var r1 in AllRules.Where(r => r.Connections.Any(c => c.ID == args.ConnectionID)))
             {
-                var external = (IExternal) sender;
+                var external = (IExternalSource) sender;
                 //get the statechange directive from the rule
                 var statechangedirective = r1.Fire(r1.Connections.First(r => r.ID == args.ConnectionID), args.OldState);
                 //set the state on the external source.
@@ -44,7 +46,7 @@ namespace Domotics.Base
         /// <summary>
         /// list of external sources
         /// </summary>
-        public IEnumerable<IExternal> Externals { get; set; }
+        public IEnumerable<IExternalSource> ExternalSources { get; set; }
 
         /// <summary>
         /// list of stores of rules

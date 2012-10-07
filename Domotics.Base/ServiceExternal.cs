@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Domotics.Base
 {
-    public class ServiceExternal : IExternal
+    public class ServiceExternal : IExternalSource
     {
         private readonly List<Connection> _connections;
 
-        public ServiceExternal()
+        public ServiceExternal ()
         {
             _connections = new List<Connection>();
         }

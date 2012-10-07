@@ -10,6 +10,6 @@ namespace Domotics.Base
         /// <summary>
         /// a list of rules it has.
         /// </summary>
-        IEnumerable<Rule> Rules { get; set; }
+        IEnumerable<Rule> Rules { get; }
     }
 }
