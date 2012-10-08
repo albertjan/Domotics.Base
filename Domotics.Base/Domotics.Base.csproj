@@ -43,7 +43,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="ConnectionType.cs" />
     <Compile Include="Distributor.cs" />
-    <Compile Include="IExternal.cs" />
+    <Compile Include="IExternalSource.cs" />
     <Compile Include="IRuleStore.cs" />
     <Compile Include="IState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
