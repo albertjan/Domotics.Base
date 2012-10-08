@@ -4,16 +4,16 @@ namespace Domotics.Base
     /// <summary>
     /// State description
     /// </summary>
-    public interface IState
+    public class State
     {
         /// <summary>
         /// The name
         /// </summary>
-        string Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// A longer name
         /// </summary>
-        string Description { get; set; }
+        public string Description { get; set; }
     }
 }

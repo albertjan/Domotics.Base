@@ -26,11 +26,11 @@ namespace Domotics.Base
         /// <summary>
         /// List of available states for the connection
         /// </summary>
-        public List<IState> AvailableStates { get; set; }
+        public List<State> AvailableStates { get; set; }
 
         /// <summary>
         /// the current state
         /// </summary>
-        public IState CurrentState { get; set; }
+        public State CurrentState { get; set; }
     }
 }

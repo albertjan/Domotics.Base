@@ -1,8 +1,10 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Domotics.Base
 {
@@ -21,35 +23,36 @@ namespace Domotics.Base
         public static IRuleLogic Compile(string logic)
         {
             if (CompiledStories.ContainsKey (logic)) return CompiledStories[logic];
-            else
-            {
-                var rl = "using Domotics.Base;" +
-                         "public class " + Path.GetRandomFileName().Replace(".", "") + " : IRuleLogic" +
-                         "{ " +
-                         "    public IState GetNewState(IState input) " +
-                         "    { " +
-                         "         return " + logic + "" +
-                         "    }" +
-                         "}";
+            
+            var rl = "using Domotics.Base;" +
+                     "public class " + Path.GetRandomFileName().Replace(".", "") + " : IRuleLogic" +
+                     "{ " +
+                     "    public State GetNewState(State input, Connection connection, IEnumerable<Connection> connections) " +
+                     "    { " +
+                     "         return new Logic(input, connection, connections)." + logic + ";" +
+                     "    }" +
+                     "}";
 
-                var ass = CodeDomProvider.CreateProvider ("CSharp")
-                                     .CompileAssemblyFromSource (
-                                        new CompilerParameters
-                                        {
-                                            GenerateInMemory = false,
-                                            GenerateExecutable = false,
-                                            IncludeDebugInformation = false,
-                                            OutputAssembly = "RuleLogic",
-                                        },
-                                        new[]
-                                        {
-	                                        rl
-	                                    }).CompiledAssembly;
+            var cdp = CodeDomProvider.CreateProvider ("CSharp")
+                .CompileAssemblyFromSource (
+                    new CompilerParameters
+                        {
+                            GenerateInMemory = false,
+                            GenerateExecutable = false,
+                            IncludeDebugInformation = true,
+                            OutputAssembly = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "mydll.dll")
+                        },
+                    new[]
+                        {
+                            rl
+                        });
 
-                var irl = ass.GetTypes().First(t => t.GetInterfaces().Contains(typeof (IRuleLogic)));
+            
+            var ass = cdp.CompiledAssembly;
 
-                return (IRuleLogic)Activator.CreateInstance(irl);
-            }
+            var irl = ass.GetTypes().First(t => t.GetInterfaces().Contains(typeof (IRuleLogic)));
+
+            return (IRuleLogic)Activator.CreateInstance(irl);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace Domotics.Base
         /// </summary>
         /// <param name="connection">the concerning connection</param>
         /// <param name="oldState">the previous state</param>
-        public StateChangeDirective Fire(Connection connection, IState oldState)
+        public StateChangeDirective Fire(Connection connection, State oldState)
         {
             return Logic.GetNewState(oldState, connection, Connections.ToList());
         }

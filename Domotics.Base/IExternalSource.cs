@@ -33,10 +33,10 @@ namespace Domotics.Base
         /// <summary>
         /// the current/new state
         /// </summary>
-        public IState NewState { get; set; }
+        public State NewState { get; set; }
         /// <summary>
         /// old state
         /// </summary>
-        public IState OldState { get; set; }
+        public State OldState { get; set; }
     }
 }

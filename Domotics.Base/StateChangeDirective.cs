@@ -8,7 +8,7 @@ namespace Domotics.Base
         /// <summary>
         /// the new state
         /// </summary>
-        public IState NewState { get; set; }
+        public State NewState { get; set; }
         /// <summary>
         /// of this connection.
         /// </summary>

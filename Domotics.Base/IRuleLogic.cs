@@ -14,6 +14,6 @@ namespace Domotics.Base
         /// <param name="connection">the connection that changed</param>
         /// <param name="connections">the connections that can be changed by this script</param>
         /// <returns></returns>
-        StateChangeDirective GetNewState(IState input, Connection connection, List<Connection> connections);
+        StateChangeDirective GetNewState(State input, Connection connection, List<Connection> connections);
     }
 }
