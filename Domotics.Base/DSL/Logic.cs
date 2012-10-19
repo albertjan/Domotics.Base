@@ -35,6 +35,11 @@ namespace Domotics.Base.DSL
             }        
             throw new LogicException("Output Connections cant be \"Pushed\"");
         }
+
+        public static Func<string, StateChangeDirective> Turn(this Connection connection, string what)
+        {
+            return s => new StateChangeDirective();
+        }
     }
 
     public class LogicException : Exception

@@ -46,11 +46,11 @@
     <Compile Include="DSL\Logic.cs" />
     <Compile Include="IExternalSource.cs" />
     <Compile Include="IRuleStore.cs" />
+    <Compile Include="RuleLogicCompiler.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="IRuleLogic.cs" />
-    <Compile Include="RuleLogicCompiler.cs" />
     <Compile Include="ServiceExternal.cs" />
     <Compile Include="StateChangeDirective.cs" />
     <Compile Include="StaticRuleStore.cs" />

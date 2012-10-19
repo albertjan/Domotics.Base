@@ -24,29 +24,33 @@ namespace Domotics.Base
         {
             if (CompiledStories.ContainsKey (logic)) return CompiledStories[logic];
             
-            var rl = "using Domotics.Base;" +
-                     "public class " + Path.GetRandomFileName().Replace(".", "") + " : IRuleLogic" +
-                     "{ " +
-                     "    public State GetNewState(State input, Connection connection, IEnumerable<Connection> connections) " +
-                     "    { " +
-                     "         return new Logic(input, connection, connections)." + logic + ";" +
-                     "    }" +
-                     "}";
+            var rl = @"
+                     using Domotics.Base;
+                     using Domotics.Base.DSL;
+                     using System.Collections.Generic;
+                     namespace Domotics.Base.Generated
+                     {
+                         public class " + Path.GetRandomFileName().Replace(".", "") + @" : IRuleLogic
+                         { 
+                             public StateChangeDirective GetNewState(State input, Connection connection, List<Connection> connections)
+                             { 
+                                 return new Logic(input, connection, connections)." + logic + @";
+                             }
+                         }
+                     }";
 
-            var cdp = CodeDomProvider.CreateProvider ("CSharp")
-                .CompileAssemblyFromSource (
-                    new CompilerParameters
-                        {
-                            GenerateInMemory = false,
-                            GenerateExecutable = false,
-                            IncludeDebugInformation = true,
-                            OutputAssembly = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "mydll.dll")
-                        },
-                    new[]
-                        {
-                            rl
-                        });
+            var cp = new CompilerParameters
+                         {
+                             GenerateInMemory = false,
+                             GenerateExecutable = false,
+                             IncludeDebugInformation = true,
+                             OutputAssembly = Path.GetRandomFileName ().Replace (".", "") + ".dll"
+                         };
 
+            cp.ReferencedAssemblies.Add("Domotics.Base.dll");
+            cp.ReferencedAssemblies.Add ("mscorlib.dll");
+
+            var cdp = CodeDomProvider.CreateProvider ("CSharp").CompileAssemblyFromSource (cp, new[] { rl });
             
             var ass = cdp.CompiledAssembly;
 
