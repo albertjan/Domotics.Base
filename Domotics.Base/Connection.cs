@@ -13,6 +13,29 @@ namespace Domotics.Base
             return Name;
         }
 
+        public Connection(string connectionName, ConnectionType type)
+        {
+            Name = connectionName;
+            Type = type;
+            switch (Type)
+            {
+                case ConnectionType.Out:
+                    AvailableStates = new List<State>
+                                          {
+                                              new State { Name = "on"},
+                                              new State { Name = "off"}
+                                          };
+                    break;
+                case ConnectionType.In:
+                    AvailableStates = new List<State>
+                                          {
+                                              new State { Name = "in"},
+                                              new State { Name = "out"}
+                                          };
+                    break;
+            }
+        }
+
         public Connection(string connectionName)
         {
             Name = connectionName;

@@ -17,10 +17,10 @@ namespace Domotics.Base
         public Rule(string logic, IEnumerable<string> connections)
         {
             Logic = RuleLogicCompiler.Compile(logic);
-            Connections = new List<Connection>();
+            Connections = new List<Connection> ();
             foreach (var connection in connections)
             {
-                ((List<Connection>)Connections).Add(new Connection(connection));
+                ((List<Connection>)Connections).Add (new Connection (connection));
             }
             //resolve connections and put them in the property.
         }

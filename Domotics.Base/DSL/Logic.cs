@@ -19,26 +19,34 @@ namespace Domotics.Base.DSL
             Connections = connections;
         }
 
-        public Connection When(string connectionName)
+        public Tuple<Connection, State, IEnumerable<Connection>> When (string connectionName)
         {
-            return Connections.First(c => c.Name == connectionName);
+            return new Tuple<Connection, State, IEnumerable<Connection>>(Connections.First(c => c.Name == connectionName), Input, Connections);
         }
     }
 
     public static class Extentions
     {
-        public static Connection IsPushed(this Connection con)
+        public static Tuple<Connection, bool, IEnumerable<Connection>> IsPushed (this Tuple<Connection, State, IEnumerable<Connection>> conState)
         {
-            if (con.Type == ConnectionType.In || con.Type == ConnectionType.Both)
+            if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
             {
-                return con;
+                return new Tuple<Connection, bool, IEnumerable<Connection>> (conState.Item1, (conState.Item1.CurrentState == new State { Name = "in" } && conState.Item2 == new State { Name = "out" }), conState.Item3);
             }        
             throw new LogicException("Output Connections cant be \"Pushed\"");
         }
 
-        public static Func<string, StateChangeDirective> Turn(this Connection connection, string what)
+        public static Func<string, StateChangeDirective> Turn (this Tuple<Connection, bool, IEnumerable<Connection>> connection, string which)
         {
-            return s => new StateChangeDirective();
+            return s => {
+                if (connection.Item2) return null;
+                
+                return new StateChangeDirective
+                    {
+                        Connection = connection.Item3.First(c => c.Name == which),
+                        NewState = new State {Name = s}
+                    };
+            };
         }
     }
 

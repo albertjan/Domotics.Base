@@ -12,13 +12,13 @@ namespace Domotics.Base.Test.Fakes
         {
             TestConnections = new List<Connection>
                                   {
-                                      new Connection("lampje")
+                                      new Connection("lampje", ConnectionType.Out)
                                           {
-                                              Type = ConnectionType.Out
+                                              CurrentState = new State{Name = "off"}
                                           },
-                                      new Connection("knopje")
+                                      new Connection("knopje", ConnectionType.In)
                                           {
-                                              Type = ConnectionType.In
+                                              CurrentState = new State{Name = "out"}
                                           }
                                   };
         }

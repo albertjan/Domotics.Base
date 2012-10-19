@@ -10,7 +10,6 @@ namespace Domotics.Base.Test.Fakes
             TestRules = new List<Rule>();
         }
 
-
         public List<Rule> TestRules { get; set; } 
 
         public IEnumerable<Rule> Rules { get { return TestRules; } }

@@ -20,7 +20,7 @@ namespace Domotics.Base.Test
         private Distributor Distributor { get; set; }
 
         [Test]
-        public void SimpleRuleTest ()
+        public void SimpleRuleCheckTest ()
         {
             var rule = new Rule(@"When(""knopje"").IsPushed().Turn(""lampje"")(""on"")", new[] {"knopje", "lampje"});
             Distributor.RuleStores.First().AddRule (rule);
@@ -28,5 +28,15 @@ namespace Domotics.Base.Test
             Assert.IsTrue(rule.Check());
         }
 
+        [Test]
+        public void SimpleRuleFireTest ()
+        {
+            var rule = new Rule (@"When(""knopje"").IsPushed().Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
+            Distributor.RuleStores.First ().AddRule (rule);
+            var chd =
+                rule.Fire(new Connection("knopje", ConnectionType.In) {CurrentState = new State {Name = "out"}},
+                          new State {Name = "in"}).Connection.Name;
+            Assert.AreEqual("lampje",chd);
+        }
     }
 }
