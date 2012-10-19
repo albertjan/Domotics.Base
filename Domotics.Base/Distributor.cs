@@ -13,6 +13,11 @@ namespace Domotics.Base
             ExternalSources = externalSources;
             RuleStores = ruleStores;
 
+            foreach (var ruleStore in ruleStores)
+            {
+                ruleStore.Distributor = this;
+            }
+
             //subscribe to all input events on all external sources.
             foreach (var externalSource in ExternalSources)
             {
@@ -52,5 +57,10 @@ namespace Domotics.Base
         /// list of stores of rules
         /// </summary>
         public IEnumerable<IRuleStore> RuleStores { get; set; }
+
+        public IEnumerable<Connection> ResolveConnections(IEnumerable<string> connectionNames)
+        {
+            return ExternalSources.SelectMany(e => e.Connections).Join(connectionNames, c => c.Name, s => s, (c, s) => c);
+        }
     }
 }

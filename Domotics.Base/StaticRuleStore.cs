@@ -22,5 +22,11 @@ namespace Domotics.Base
                 return CompiledRules;
             } 
         }
+
+        public Distributor Distributor { set; private get; }
+        public bool AddRule(Rule rule)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

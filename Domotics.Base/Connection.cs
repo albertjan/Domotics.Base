@@ -8,6 +8,16 @@ namespace Domotics.Base
     /// </summary>
     public class Connection
     {
+        public override string ToString ()
+        {
+            return Name;
+        }
+
+        public Connection(string connectionName)
+        {
+            Name = connectionName;
+        }
+
         /// <summary>
         /// Name of the connection
         /// </summary>

@@ -23,7 +23,8 @@ namespace Domotics.Base.Test
         public void SimpleRuleTest ()
         {
             var rule = new Rule(@"When(""knopje"").IsPushed().Turn(""lampje"")(""on"")", new[] {"knopje", "lampje"});
-            ((List<Rule>)Distributor.RuleStores.First().Rules).Add (rule);
+            Distributor.RuleStores.First().AddRule (rule);
+
             Assert.IsTrue(rule.Check());
         }
 

@@ -17,6 +17,11 @@ namespace Domotics.Base
         public Rule(string logic, IEnumerable<string> connections)
         {
             Logic = RuleLogicCompiler.Compile(logic);
+            Connections = new List<Connection>();
+            foreach (var connection in connections)
+            {
+                ((List<Connection>)Connections).Add(new Connection(connection));
+            }
             //resolve connections and put them in the property.
         }
 
@@ -33,6 +38,8 @@ namespace Domotics.Base
         public bool Check ()
         {
             if (Logic == null) return false;
+            //connections is not null
+            if (Connections == null) return false;
             //must contain 2 elements
             if (Connections.Count () < 2) return false;
             //must contain altleast one in and one out 

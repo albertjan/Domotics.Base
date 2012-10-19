@@ -17,7 +17,7 @@ namespace Domotics.Base
         /// <summary>
         /// list of connections for this external source
         /// </summary>
-        IEnumerable<Connection> Connections { get; set; }
+        IEnumerable<Connection> Connections { get; }
 
         void SetState(Guid connectionid, string statename);
     }

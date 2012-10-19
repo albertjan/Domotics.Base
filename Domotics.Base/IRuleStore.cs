@@ -11,5 +11,9 @@ namespace Domotics.Base
         /// a list of rules it has.
         /// </summary>
         IEnumerable<Rule> Rules { get; }
+
+        Distributor Distributor { set; }
+
+        bool AddRule(Rule rule);
     }
 }
