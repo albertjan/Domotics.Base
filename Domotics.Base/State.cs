@@ -40,15 +40,5 @@ namespace Domotics.Base
         {
             return !(left == right);
         }
-
-        //public static bool operator ==(State left, string right)
-        //{
-        //    return left == (State)right;
-        //}
-
-        //public static bool operator !=(State left, string right)
-        //{
-        //    return !(left == right);
-        //}
     } 
 }

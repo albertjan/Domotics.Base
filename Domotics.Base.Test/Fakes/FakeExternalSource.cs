@@ -27,9 +27,26 @@ namespace Domotics.Base.Test.Fakes
 
         public event ConnectionStateChangedEventHandler Input;
         public IEnumerable<Connection> Connections { get { return TestConnections; } }
-        public void SetState(Guid connectionid, string statename)
+        public void SetState(Connection connection, string statename)
         {
-            Connections.First(c => c.ID == connectionid).CurrentState = new State {Name = statename};
+            Connections.First(c => c.Name == connection.Name).CurrentState = statename;
+        }
+
+        public void FireInputEvent(string connectionName, string newstate)
+        {
+            OnInput(new ConnectionStateChangedEventHandlerArgs
+                        {
+                            Connection = Connections.First(c => c.Name == connectionName),
+                            NewState = newstate
+                        });
+        }
+       
+        private void OnInput(ConnectionStateChangedEventHandlerArgs args)
+        {
+            if (Input != null)
+            {
+                Input(this, args);
+            }
         }
     }
 }

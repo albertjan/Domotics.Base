@@ -20,7 +20,7 @@ namespace Domotics.Base
             set { _connections.AddRange(value); }
         }
 
-        public void SetState(Guid connectionid, string statename)
+        public void SetState(Connection connectionid, string statename)
         {
             throw new NotImplementedException();
         }

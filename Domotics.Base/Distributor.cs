@@ -38,13 +38,14 @@ namespace Domotics.Base
         private void ExternalSourceInput (object sender, ConnectionStateChangedEventHandlerArgs args)
         {
             //find all the rules that say something this connection.
-            foreach (var r1 in AllRules.Where(r => r.Connections.Any(c => c.ID == args.ConnectionID)))
+            foreach (var r1 in AllRules.Where(r => r.Connections.Any(c => c.Name == args.Connection.Name)))
             {
                 var external = (IExternalSource) sender;
                 //get the statechange directive from the rule
-                var statechangedirective = r1.Fire(r1.Connections.First(r => r.ID == args.ConnectionID), args.OldState);
+                var statechangedirective = r1.Fire (r1.Connections.First (r => r.Name == args.Connection.Name), args.NewState);
                 //set the state on the external source.
-                external.SetState(statechangedirective.Connection.ID, statechangedirective.NewState.Name);
+                if (statechangedirective != null) external.SetState (statechangedirective.Connection, statechangedirective.NewState.Name);
+                external.SetState (args.Connection, args.NewState.Name);
             }
         }
 

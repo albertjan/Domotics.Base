@@ -19,7 +19,7 @@ namespace Domotics.Base
         /// </summary>
         IEnumerable<Connection> Connections { get; }
 
-        void SetState(Guid connectionid, string statename);
+        void SetState(Connection connection, string statename);
     }
 
     public delegate void ConnectionStateChangedEventHandler(object sender, ConnectionStateChangedEventHandlerArgs args);
@@ -29,14 +29,10 @@ namespace Domotics.Base
         /// <summary>
         /// the connection this event belongs to
         /// </summary>
-        public Guid ConnectionID { get; set; }
+        public Connection Connection { get; set; }
         /// <summary>
         /// the current/new state
         /// </summary>
         public State NewState { get; set; }
-        /// <summary>
-        /// old state
-        /// </summary>
-        public State OldState { get; set; }
     }
 }

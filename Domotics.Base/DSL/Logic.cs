@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domotics.Base.DSL
 {
@@ -29,17 +27,22 @@ namespace Domotics.Base.DSL
     {
         public static Tuple<Connection, bool, IEnumerable<Connection>> IsPushed (this Tuple<Connection, State, IEnumerable<Connection>> conState)
         {
+            return ChangesState(conState, "in", "out");
+        }
+
+        public static Tuple<Connection, bool, IEnumerable<Connection>> ChangesState (this Tuple<Connection, State, IEnumerable<Connection>> conState, State from, State to)
+        {
             if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
             {
-                return new Tuple<Connection, bool, IEnumerable<Connection>> (conState.Item1, (conState.Item1.CurrentState == "in" && conState.Item2 == "out"), conState.Item3);
-            }        
-            throw new LogicException("Output Connections cant be \"Pushed\"");
+                return new Tuple<Connection, bool, IEnumerable<Connection>> (conState.Item1, (conState.Item1.CurrentState == from && conState.Item2 == to), conState.Item3);
+            }
+            throw new LogicException ("Output Connections cant be \"Pushed\"");
         }
 
         public static Func<string, StateChangeDirective> Turn (this Tuple<Connection, bool, IEnumerable<Connection>> connection, string which)
         {
             return s => {
-                if (connection.Item2) return null;
+                if (!connection.Item2) return null;
                 
                 return new StateChangeDirective
                     {

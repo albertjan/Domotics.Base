@@ -11,7 +11,7 @@ namespace Domotics.Hardware.NCD
     {
         public event ConnectionStateChangedEventHandler Input;
         public IEnumerable<Connection> Connections { get; private set; }
-        public void SetState(Guid connectionid, string statename)
+        public void SetState(Connection connectionid, string statename)
         {
             throw new NotImplementedException();
         }

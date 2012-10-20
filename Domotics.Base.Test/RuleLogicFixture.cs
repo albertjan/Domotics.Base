@@ -24,7 +24,6 @@ namespace Domotics.Base.Test
         {
             var rule = new Rule(@"When(""knopje"").IsPushed().Turn(""lampje"")(""on"")", new[] {"knopje", "lampje"});
             Distributor.RuleStores.First().AddRule (rule);
-
             Assert.IsTrue(rule.Check());
         }
 
@@ -33,9 +32,20 @@ namespace Domotics.Base.Test
         {
             var rule = new Rule (@"When(""knopje"").IsPushed().Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
             Distributor.RuleStores.First ().AddRule (rule);
+            Distributor.ExternalSources.First().Connections.First(c => c.Name == "knopje").CurrentState = "in";
             var chd = rule.Fire(new Connection("knopje", ConnectionType.In) {CurrentState = "in"}, "out");
             Assert.AreEqual("lampje",chd.Connection.Name);
             Assert.AreEqual("on", chd.NewState.Name);
+        }
+
+        [Test]
+        public void InputEventRuleFireTest ()
+        {
+            var rule = new Rule (@"When(""knopje"").IsPushed().Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
+            Distributor.RuleStores.First ().AddRule (rule);
+            ((FakeExternalSource) Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
+            ((FakeExternalSource) Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "out");
+            Assert.AreEqual("on", Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje").CurrentState.Name);
         }
     }
 }

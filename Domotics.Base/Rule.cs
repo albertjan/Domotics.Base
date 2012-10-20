@@ -59,10 +59,10 @@ namespace Domotics.Base
         /// Fire the rule to see if things will change.
         /// </summary>
         /// <param name="connection">the concerning connection</param>
-        /// <param name="oldState">the previous state</param>
-        public StateChangeDirective Fire(Connection connection, State oldState)
+        /// <param name="newState">the new state</param>
+        public StateChangeDirective Fire(Connection connection, State newState)
         {
-            return Logic.GetNewState(oldState, connection, Connections.ToList());
+            return Logic.GetNewState(newState, connection, Connections.ToList());
         }
     }
 }
