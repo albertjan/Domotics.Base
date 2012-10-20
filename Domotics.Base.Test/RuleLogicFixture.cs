@@ -47,5 +47,14 @@ namespace Domotics.Base.Test
             ((FakeExternalSource) Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "out");
             Assert.AreEqual("on", Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje").CurrentState.Name);
         }
+
+        [Test]
+        public void RuleChangesStateTest ()
+        {
+            var rule = new Rule (@"When(""knopje"").ChangesState(""out"",""in"").Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
+            Distributor.RuleStores.First ().AddRule (rule);
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
+            Assert.AreEqual ("on", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje").CurrentState.Name);
+        }
     }
 }
