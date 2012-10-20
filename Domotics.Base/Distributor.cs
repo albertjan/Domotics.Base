@@ -60,7 +60,7 @@ namespace Domotics.Base
 
         public IEnumerable<Connection> ResolveConnections(IEnumerable<string> connectionNames)
         {
-            return ExternalSources.SelectMany(e => e.Connections).Join(connectionNames, c => c.Name, s => s, (c, s) => c);
+            return ExternalSources.SelectMany(e => e.Connections).Join(connectionNames, c => c.Name, s => s, (c, s) => c).ToList();
         }
     }
 }

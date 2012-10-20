@@ -31,7 +31,7 @@ namespace Domotics.Base.DSL
         {
             if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
             {
-                return new Tuple<Connection, bool, IEnumerable<Connection>> (conState.Item1, (conState.Item1.CurrentState == new State { Name = "in" } && conState.Item2 == new State { Name = "out" }), conState.Item3);
+                return new Tuple<Connection, bool, IEnumerable<Connection>> (conState.Item1, (conState.Item1.CurrentState == "in" && conState.Item2 == "out"), conState.Item3);
             }        
             throw new LogicException("Output Connections cant be \"Pushed\"");
         }
@@ -44,7 +44,7 @@ namespace Domotics.Base.DSL
                 return new StateChangeDirective
                     {
                         Connection = connection.Item3.First(c => c.Name == which),
-                        NewState = new State {Name = s}
+                        NewState = s
                     };
             };
         }

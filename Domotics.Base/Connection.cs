@@ -20,18 +20,10 @@ namespace Domotics.Base
             switch (Type)
             {
                 case ConnectionType.Out:
-                    AvailableStates = new List<State>
-                                          {
-                                              new State { Name = "on"},
-                                              new State { Name = "off"}
-                                          };
+                    AvailableStates = new List<State> { "on", "off" };
                     break;
                 case ConnectionType.In:
-                    AvailableStates = new List<State>
-                                          {
-                                              new State { Name = "in"},
-                                              new State { Name = "out"}
-                                          };
+                    AvailableStates = new List<State> { "in", "out" };
                     break;
             }
         }

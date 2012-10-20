@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domotics.Base", "Domotics.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domotics.Base.Test", "Domotics.Base.Test\Domotics.Base.Test.csproj", "{DEA0CCF0-E447-4872-A184-832032825F96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domotics.Hardware.NCD", "Domotics.Hardware.NCD\Domotics.Hardware.NCD.csproj", "{8450CB01-4172-4A56-BA16-E935AEF77237}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{DEA0CCF0-E447-4872-A184-832032825F96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEA0CCF0-E447-4872-A184-832032825F96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEA0CCF0-E447-4872-A184-832032825F96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8450CB01-4172-4A56-BA16-E935AEF77237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8450CB01-4172-4A56-BA16-E935AEF77237}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8450CB01-4172-4A56-BA16-E935AEF77237}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8450CB01-4172-4A56-BA16-E935AEF77237}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
