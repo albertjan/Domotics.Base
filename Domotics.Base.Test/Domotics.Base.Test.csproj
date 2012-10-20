@@ -52,7 +52,6 @@
     <Compile Include="Fakes\FakeRuleStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleLogicFixture.cs" />
-    <Compile Include="test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
