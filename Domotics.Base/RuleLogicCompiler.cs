@@ -13,6 +13,8 @@ namespace Domotics.Base
     /// </summary>
     public static class RuleLogicCompiler
     {
+        private const string Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
         static RuleLogicCompiler()
         {
             CompiledStories = new Dictionary<string, IRuleLogic>();
@@ -20,17 +22,28 @@ namespace Domotics.Base
 
         private static Dictionary<string, IRuleLogic> CompiledStories { get; set; }
 
+        private static string GenerateClassName()
+        {
+            var rng = new Random(DateTime.Now.Millisecond);
+            var buffer = new char[12];
+
+            for (var i = 0; i < 12; i++)
+            {
+                buffer[i] = Chars[rng.Next(Chars.Length)];
+            }
+            return new string(buffer);
+        }
+
         public static IRuleLogic Compile(string logic)
         {
             if (CompiledStories.ContainsKey (logic)) return CompiledStories[logic];
             
             var rl = @"
-                     using Domotics.Base;
                      using Domotics.Base.DSL;
                      using System.Collections.Generic;
                      namespace Domotics.Base.Generated
                      {
-                         public class " + Path.GetRandomFileName().Replace(".", "") + @" : IRuleLogic
+                         public class " + GenerateClassName() + @" : IRuleLogic
                          { 
                              public StateChangeDirective GetNewState(State input, Connection connection, List<Connection> connections)
                              { 

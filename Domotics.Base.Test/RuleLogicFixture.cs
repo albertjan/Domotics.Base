@@ -33,7 +33,7 @@ namespace Domotics.Base.Test
         {
             var rule = new Rule (@"When(""knopje"").IsPushed().Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
             Distributor.RuleStores.First ().AddRule (rule);
-            var chd = rule.Fire(new Connection("knopje", ConnectionType.In) {CurrentState = "out"}, "in");
+            var chd = rule.Fire(new Connection("knopje", ConnectionType.In) {CurrentState = "in"}, "out");
             Assert.AreEqual("lampje",chd.Connection.Name);
             Assert.AreEqual("on", chd.NewState.Name);
         }
