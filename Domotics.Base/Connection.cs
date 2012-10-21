@@ -17,15 +17,6 @@ namespace Domotics.Base
         {
             Name = connectionName;
             Type = type;
-            switch (Type)
-            {
-                case ConnectionType.Out:
-                    AvailableStates = new List<State> { "on", "off" };
-                    break;
-                case ConnectionType.In:
-                    AvailableStates = new List<State> { "in", "out" };
-                    break;
-            }
         }
 
         public Connection(string connectionName)

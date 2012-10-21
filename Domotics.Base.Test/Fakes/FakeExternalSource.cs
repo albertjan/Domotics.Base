@@ -14,11 +14,18 @@ namespace Domotics.Base.Test.Fakes
                                   {
                                       new Connection("lampje", ConnectionType.Out)
                                           {
-                                              CurrentState = "off"
+                                              CurrentState = "off",
+                                              AvailableStates = new List<State> { "on", "off" }
+                                          },
+                                      new Connection("lampje2", ConnectionType.Out)
+                                          {
+                                              CurrentState = "off",
+                                              AvailableStates = new List<State> { "on", "off" }
                                           },
                                       new Connection("knopje", ConnectionType.In)
                                           {
-                                              CurrentState = "out"
+                                              CurrentState = "out",
+                                              AvailableStates = new List<State> { "in", "out" }
                                           }
                                   };
         }

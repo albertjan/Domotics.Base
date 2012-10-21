@@ -45,9 +45,12 @@ namespace Domotics.Base
                      {
                          public class " + GenerateClassName() + @" : IRuleLogic
                          { 
-                             public StateChangeDirective GetNewState(State input, Connection connection, List<Connection> connections)
+                             public StateChangeDirective GetNewState(State input, 
+                                                                     Connection connection, 
+                                                                     List<Connection> connections, 
+                                                                     long lastTriggered)
                              { 
-                                 return new Logic(input, connection, connections)." + logic + @";
+                                 return new Logic(input, connection, connections, lastTriggered)." + logic + @";
                              }
                          }
                      }";

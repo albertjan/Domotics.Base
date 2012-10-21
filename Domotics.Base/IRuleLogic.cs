@@ -13,7 +13,8 @@ namespace Domotics.Base
         /// <param name="input">new state of the "In" connection that caused this function to be called</param>
         /// <param name="connection">the connection that changed</param>
         /// <param name="connections">the connections that can be changed by this script</param>
+        /// <param name="lastTriggered"> </param>
         /// <returns></returns>
-        StateChangeDirective GetNewState(State input, Connection connection, List<Connection> connections);
+        StateChangeDirective GetNewState(State input, Connection connection, List<Connection> connections, long lastTriggered);
     }
 }

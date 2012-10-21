@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Domotics.Base
@@ -16,6 +18,7 @@ namespace Domotics.Base
         /// <param name="connections"></param>
         public Rule(string logic, IEnumerable<string> connections)
         {
+            LogicText = logic;
             Logic = RuleLogicCompiler.Compile(logic);
             Connections = new List<Connection> ();
             foreach (var connection in connections)
@@ -25,12 +28,22 @@ namespace Domotics.Base
             //resolve connections and put them in the property.
         }
 
+        private string LogicText { get; set; }
+
         /// <summary>
         /// The connections this rule does things with. 
         /// </summary>
         public IEnumerable<Connection> Connections { get; set; }
 
+        /// <summary>
+        /// Compiled Logic.
+        /// </summary>
         private IRuleLogic Logic { get; set; }
+
+        /// <summary>
+        /// ticks since 1-1-1970 
+        /// </summary>
+        public long LastTriggered { get; set; }
 
         /// <summary>
         /// Checks wether the rules make sense.
@@ -62,7 +75,10 @@ namespace Domotics.Base
         /// <param name="newState">the new state</param>
         public StateChangeDirective Fire(Connection connection, State newState)
         {
-            return Logic.GetNewState(newState, connection, Connections.ToList());
+            Debug.WriteLine("Rule with logic: " + LogicText + " fireing!");
+            var scd = Logic.GetNewState(newState, connection, Connections.ToList(), LastTriggered);
+            LastTriggered = DateTime.Now.Ticks;
+            return scd;
         }
     }
 }

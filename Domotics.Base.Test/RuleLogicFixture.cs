@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Castle.Components.DictionaryAdapter;
+﻿using System.Linq;
+using System.Threading;
 using Domotics.Base.Test.Fakes;
-using FakeItEasy;
 using NUnit.Framework;
 
 namespace Domotics.Base.Test
@@ -75,6 +72,80 @@ namespace Domotics.Base.Test
             
             //then
             Assert.AreEqual ("on", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje").CurrentState.Name);
+        }
+
+        [Test]
+        public void RuleInputHeld ()
+        {
+            //given
+            var rule = new Rule (@"When(""knopje"").IsHeld().Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
+            Distributor.RuleStores.First ().AddRule (rule);
+
+            //when
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
+            //IsHeld means the second event has to happen after 500ms.
+            Thread.Sleep (500);
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "out");
+         
+            //then
+            Assert.AreEqual ("on", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje").CurrentState.Name);
+        }
+
+        [Test]
+        public void RuleInputHeldNotLongEnough ()
+        {
+            //given
+            var rule1 = new Rule (@"When(""knopje"").IsHeld().Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
+            Distributor.RuleStores.First ().AddRule (rule1);
+
+            //when
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
+            //IsHeld means the second event has to happen after 500ms.
+            Thread.Sleep (450);
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "out");
+
+            //then
+            Assert.AreEqual ("off", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje").CurrentState.Name);
+        }
+
+        [Test]
+        public void RuleInputHeldWithTwoRules ()
+        {
+            //given
+            var rule1 = new Rule (@"When(""knopje"").IsHeld().Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
+            var rule2 = new Rule (@"When(""knopje"").IsPushed().Turn(""lampje2"")(""on"")", new[] { "knopje", "lampje2" });
+            Distributor.RuleStores.First ().AddRule (rule1);
+            Distributor.RuleStores.First ().AddRule (rule2);
+            
+            //when
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
+            //IsHeld means the second event has to happen after 500ms.
+            Thread.Sleep (500);
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "out");
+
+            //then
+            Assert.AreEqual ("on", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje").CurrentState.Name);
+            Assert.AreEqual ("off", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje2").CurrentState.Name);
+        }
+
+        [Test]
+        public void RuleInputNotHeldWithTwoRules ()
+        {
+            //given
+            var rule1 = new Rule (@"When(""knopje"").IsHeld().Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
+            var rule2 = new Rule (@"When(""knopje"").IsPushed().Turn(""lampje2"")(""on"")", new[] { "knopje", "lampje2" });
+            Distributor.RuleStores.First ().AddRule (rule1);
+            Distributor.RuleStores.First ().AddRule (rule2);
+
+            //when
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
+            //IsHeld means the second event has to happen after 500ms.
+            //Thread.Sleep (500);
+            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "out");
+
+            //then
+            Assert.AreEqual ("off", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje").CurrentState.Name);
+            Assert.AreEqual ("on", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje2").CurrentState.Name);
         }
     }
 }

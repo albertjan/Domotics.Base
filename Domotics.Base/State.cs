@@ -27,6 +27,7 @@ namespace Domotics.Base
             {
                 return true;
             }
+
             if (ReferenceEquals (left, null) || ReferenceEquals (right, null))
             {
                 return false;
@@ -39,6 +40,19 @@ namespace Domotics.Base
         public static bool operator !=(State left, State right)
         {
             return !(left == right);
+        }
+
+        public override bool Equals (object obj)
+        {
+            if (obj == null) return false;
+            var state = obj as State;
+            if (state == null) return false;
+            return state.Name == Name;
+        }
+
+        public override int GetHashCode ()
+        {
+            return Name.GetHashCode();
         }
     } 
 }
