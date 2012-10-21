@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using Domotics.Base.Test.Fakes;
 using NUnit.Framework;
@@ -37,6 +38,8 @@ namespace Domotics.Base.Test
             Distributor.RuleStores.First ().AddRule (rule);
             Distributor.ExternalSources.First().Connections.First(c => c.Name == "knopje").CurrentState = "in";
 
+            rule.LastTriggered = DateTime.Now.Ticks;
+
             //when
             var chd = rule.Fire(new Connection("knopje", ConnectionType.In) {CurrentState = "in"}, "out");
             
@@ -64,9 +67,10 @@ namespace Domotics.Base.Test
         public void RuleChangesStateTest ()
         {
             //given
-            var rule = new Rule (@"When(""knopje"").ChangesState(""out"",""in"").Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
+            var rule = new Rule (@"When(""knopje"").ChangesStateWithin(""out"",""in"", 500).Turn(""lampje"")(""on"")", new[] { "knopje", "lampje" });
             Distributor.RuleStores.First ().AddRule (rule);
-            
+            //set the last triggered so we can see it's less than 500ms ago.
+            rule.LastTriggered = DateTime.Now.Ticks;
             //when
             ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
             

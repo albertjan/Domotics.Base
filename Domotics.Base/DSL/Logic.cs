@@ -36,7 +36,7 @@ namespace Domotics.Base.DSL
     {
         public static ConnectionState IsPushed (this ConnectionState conState)
         {
-            return conState.ChangesState ("in", "out");
+            return conState.ChangesStateWithin ("in", "out", 500);
         }
 
         public static ConnectionState IsHeld (this ConnectionState conState)
@@ -49,12 +49,15 @@ namespace Domotics.Base.DSL
             return conState.ChangesStateAfter ("in", "out", millisecs);
         }
 
-        public static ConnectionState ChangesState (this ConnectionState conState, State from, State to)
+        public static ConnectionState ChangesStateWithin (this ConnectionState conState, State from, State to, int millisecs)
         {
             if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
             {
+                Debug.WriteLine ("LT: " + conState.Item5 + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - conState.Item5) + ", " + (conState.Item5 + (millisecs * 10000) > DateTime.Now.Ticks));
+
                 return new ConnectionState(conState.Item1, conState.Item2,
-                                           (conState.Item1.CurrentState == from && conState.Item2 == to), 
+                                           (conState.Item1.CurrentState == from && conState.Item2 == to) &&
+                                           conState.Item5 + (millisecs*10000) > DateTime.Now.Ticks,
                                            conState.Item4,
                                            conState.Item5);
             }
@@ -66,7 +69,10 @@ namespace Domotics.Base.DSL
             if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
             {
                 Debug.WriteLine ("LT: " + conState.Item5 + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - conState.Item5) + ", " + (conState.Item5 + (millisecs * 10000) < DateTime.Now.Ticks));
-                return new ConnectionState (conState.Item1, conState.Item2, (conState.Item1.CurrentState == from && conState.Item2 == to) && conState.Item5 + (millisecs * 10000) < DateTime.Now.Ticks, conState.Item4, conState.Item5);
+                return new ConnectionState(conState.Item1, conState.Item2,
+                                           (conState.Item1.CurrentState == from && conState.Item2 == to) &&
+                                           conState.Item5 + (millisecs*10000) < DateTime.Now.Ticks, conState.Item4,
+                                           conState.Item5);
             }
             throw new LogicException ("Output Connections cant be \"Pushed\"");
         }
@@ -75,7 +81,7 @@ namespace Domotics.Base.DSL
         {
             return s =>
             {
-                if (!connection.Item3) return null;
+                if (!connection.Item3) return new StateChangeDirective[] { null } ;
 
                 return new[]
                            {
