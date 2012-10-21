@@ -41,8 +41,8 @@ namespace Domotics.Base.Test
             var chd = rule.Fire(new Connection("knopje", ConnectionType.In) {CurrentState = "in"}, "out");
             
             //then
-            Assert.AreEqual("lampje",chd.Connection.Name);
-            Assert.AreEqual("on", chd.NewState.Name);
+            Assert.AreEqual("lampje",chd.First().Connection.Name);
+            Assert.AreEqual("on", chd.First().NewState.Name);
         }
 
         [Test]

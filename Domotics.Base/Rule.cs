@@ -73,7 +73,7 @@ namespace Domotics.Base
         /// </summary>
         /// <param name="connection">the concerning connection</param>
         /// <param name="newState">the new state</param>
-        public StateChangeDirective Fire(Connection connection, State newState)
+        public IEnumerable<StateChangeDirective> Fire(Connection connection, State newState)
         {
             Debug.WriteLine("Rule with logic: " + LogicText + " fireing!");
             var scd = Logic.GetNewState(newState, connection, Connections.ToList(), LastTriggered);

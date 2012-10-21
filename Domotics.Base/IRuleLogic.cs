@@ -15,6 +15,6 @@ namespace Domotics.Base
         /// <param name="connections">the connections that can be changed by this script</param>
         /// <param name="lastTriggered"> </param>
         /// <returns></returns>
-        StateChangeDirective GetNewState(State input, Connection connection, List<Connection> connections, long lastTriggered);
+        IEnumerable<StateChangeDirective> GetNewState(State input, Connection connection, List<Connection> connections, long lastTriggered);
     }
 }

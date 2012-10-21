@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace Domotics.Base.Test.Fakes
         public IEnumerable<Connection> Connections { get { return TestConnections; } }
         public void SetState(Connection connection, string statename)
         {
+            Debug.WriteLine("Setting: " + connection.Name + " to: " + statename);
             Connections.First(c => c.Name == connection.Name).CurrentState = statename;
         }
 

@@ -53,7 +53,10 @@ namespace Domotics.Base.DSL
         {
             if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
             {
-                return new ConnectionState (conState.Item1, conState.Item2, (conState.Item1.CurrentState == from && conState.Item2 == to), conState.Item4, conState.Item5);
+                return new ConnectionState(conState.Item1, conState.Item2,
+                                           (conState.Item1.CurrentState == from && conState.Item2 == to), 
+                                           conState.Item4,
+                                           conState.Item5);
             }
             throw new LogicException ("Output Connections cant be \"Pushed\"");
         }
@@ -68,16 +71,20 @@ namespace Domotics.Base.DSL
             throw new LogicException ("Output Connections cant be \"Pushed\"");
         }
 
-        public static Func<string, StateChangeDirective> Turn (this ConnectionState connection, string which)
+        public static Func<string, IEnumerable<StateChangeDirective>> Turn (this ConnectionState connection, string which)
         {
-            return s => {
+            return s =>
+            {
                 if (!connection.Item3) return null;
-                
-                return new StateChangeDirective
-                    {
-                        Connection = connection.Item4.First(c => c.Name == which),
-                        NewState = s
-                    };
+
+                return new[]
+                           {
+                               new StateChangeDirective
+                                   {
+                                       Connection = connection.Item4.First(c => c.Name == which),
+                                       NewState = s
+                                   }
+                           };
             };
         }
     }
