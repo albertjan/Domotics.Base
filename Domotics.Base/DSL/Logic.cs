@@ -17,7 +17,14 @@ namespace Domotics.Base.DSL
         private Connection Connection { get; set; }
         private List<Connection> Connections { get; set; }
         private long LastTriggered { get; set; }
-
+        
+        /// <summary>
+        /// The start of the story collecting all the 
+        /// </summary>
+        /// <param name="input">The state to which the input is to change after this story.</param>
+        /// <param name="connection">The connection that caused this rule to fire.</param>
+        /// <param name="connections">The connection that this rule talks about.</param>
+        /// <param name="lastTriggered">The last time the rule was triggered.</param>
         public Logic (State input, Connection connection, List<Connection> connections, long lastTriggered)
         {
             Input = input;
@@ -31,7 +38,6 @@ namespace Domotics.Base.DSL
         /// </summary>
         /// <param name="connectionName">the name of the input you want it to react on.</param>
         /// <returns>the ConnectionState</returns>
-
         public ConnectionState When (string connectionName)
         {
             return new ConnectionState (Connections.First (c => c.Name == connectionName), Input, true, Connections, LastTriggered);
@@ -93,7 +99,15 @@ namespace Domotics.Base.DSL
             }
             throw new LogicException ("Output Connections cant be \"Pushed\"");
         }
-        
+
+        /// <summary>
+        /// Continues the story when the input connection selected with When is pushed for atleast the specified number of milliseconds and when the state changes from From to To.
+        /// </summary>
+        /// <param name="conState">the ConnectionState</param>
+        /// <param name="from">from State</param>
+        /// <param name="to">to State</param>
+        /// <param name="millisecs">the specified number of milliseconds before which the state has to change.</param>
+        /// <returns>the ConnectionState</returns>
         public static ConnectionState ChangesStateAfter (this ConnectionState conState, State from, State to, int millisecs)
         {
             if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
@@ -107,6 +121,12 @@ namespace Domotics.Base.DSL
             throw new LogicException ("Output Connections cant be \"Pushed\"");
         }
 
+        /// <summary>
+        /// Returns a func that can be called to return the StateChangeDirectives that are a result from the story.
+        /// </summary>
+        /// <param name="connection">the ConnectionState</param>
+        /// <param name="which">a selector to select </param>
+        /// <returns>the Func that can be called.</returns>
         public static Func<string, IEnumerable<StateChangeDirective>> Turn (this ConnectionState connection, string which)
         {
             return s =>
