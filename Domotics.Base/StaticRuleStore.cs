@@ -8,13 +8,17 @@ namespace Domotics.Base
     /// </summary>
     public class StaticRuleStore : IRuleStore
     {
+        /// <summary>
+        /// Initializer the rulestore
+        /// </summary>
         public StaticRuleStore()
         {
-            CompiledRules = new List<Rule> {new Rule("turn on//", new[] {"knopje", "lampje"})};
+            CompiledRules = new List<Rule> {new Rule("", new[] {"knopje", "lampje"})};
         }
 
         private List<Rule> CompiledRules { get; set; }
         
+        /// <inherit-doc/>
         public IEnumerable<Rule> Rules 
         { 
             get
@@ -23,7 +27,10 @@ namespace Domotics.Base
             } 
         }
 
+        /// <inherit-doc/>
         public Distributor Distributor { set; private get; }
+
+        /// <inherit-doc/>
         public bool AddRule(Rule rule)
         {
             throw new System.NotImplementedException();

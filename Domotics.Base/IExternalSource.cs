@@ -8,7 +8,6 @@ namespace Domotics.Base
     /// </summary>
     public interface IExternalSource
     {
-
         /// <summary>
         /// event that fires when something has changed
         /// </summary>
@@ -19,12 +18,25 @@ namespace Domotics.Base
         /// </summary>
         IEnumerable<Connection> Connections { get; }
 
+        /// <summary>
+        /// Set the state for a connection
+        /// </summary>
+        /// <param name="connection">the connection</param>
+        /// <param name="statename">the state</param>
         void SetState(Connection connection, string statename);
     }
 
-    public delegate void ConnectionStateChangedEventHandler(object sender, ConnectionStateChangedEventHandlerArgs args);
+    /// <summary>
+    /// The event that fires when a state changes in this source
+    /// </summary>
+    /// <param name="sender">this</param>
+    /// <param name="e">the <see cref="ConnectionStateChangedEventHandlerArgs"/>Arguments</param>
+    public delegate void ConnectionStateChangedEventHandler(object sender, ConnectionStateChangedEventHandlerArgs e);
 
-    public class ConnectionStateChangedEventHandlerArgs
+    /// <summary>
+    /// The arguments for the connectionstatechanged events.
+    /// </summary>
+    public class ConnectionStateChangedEventHandlerArgs : EventArgs
     {
         /// <summary>
         /// the connection this event belongs to

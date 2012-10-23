@@ -34,6 +34,11 @@ namespace Domotics.Base
             return new string(buffer);
         }
 
+        /// <summary>
+        /// Compile the user story
+        /// </summary>
+        /// <param name="logic">the story</param>
+        /// <returns>the newly compiled RuleLogic.</returns>
         public static IRuleLogic Compile(string logic)
         {
             if (CompiledStories.ContainsKey (logic)) return CompiledStories[logic];

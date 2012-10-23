@@ -8,12 +8,17 @@ namespace Domotics.Base
     /// </summary>
     public class Distributor
     {
+        /// <summary>
+        /// Create the Distributor.
+        /// </summary>
+        /// <param name="externalSources">the external sources.</param>
+        /// <param name="ruleStores">the stores for the rules</param>
         public Distributor(IEnumerable<IExternalSource> externalSources, IEnumerable<IRuleStore> ruleStores)
         {
             ExternalSources = externalSources;
             RuleStores = ruleStores;
 
-            foreach (var ruleStore in ruleStores)
+            foreach (var ruleStore in RuleStores)
             {
                 ruleStore.Distributor = this;
             }
@@ -69,6 +74,11 @@ namespace Domotics.Base
         /// </summary>
         public IEnumerable<IRuleStore> RuleStores { get; set; }
 
+        /// <summary>
+        /// resolve the connections to their real ones by their name.
+        /// </summary>
+        /// <param name="connectionNames">connection names</param>
+        /// <returns>a list of connections.</returns>
         public IEnumerable<Connection> ResolveConnections(IEnumerable<string> connectionNames)
         {
             return ExternalSources.SelectMany(e => e.Connections).Join(connectionNames, c => c.Name, s => s, (c, s) => c).ToList();

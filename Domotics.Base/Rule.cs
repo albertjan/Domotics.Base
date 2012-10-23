@@ -10,12 +10,11 @@ namespace Domotics.Base
     /// </summary>
     public class Rule
     {
-
         /// <summary>
-        /// TODO: fill connection by finding them by name from the external sources.
+        /// The basic rule.
         /// </summary>
-        /// <param name="logic"></param>
-        /// <param name="connections"></param>
+        /// <param name="logic">the story.</param>
+        /// <param name="connections">and the connections it wan't to say something about.</param>
         public Rule(string logic, IEnumerable<string> connections)
         {
             LogicText = logic;
@@ -23,9 +22,8 @@ namespace Domotics.Base
             Connections = new List<Connection> ();
             foreach (var connection in connections)
             {
-                ((List<Connection>)Connections).Add (new Connection (connection));
+                ((List<Connection>) Connections).Add(new Connection(connection));
             }
-            //resolve connections and put them in the property.
         }
 
         private string LogicText { get; set; }

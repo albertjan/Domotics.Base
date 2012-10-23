@@ -11,6 +11,9 @@ namespace Domotics.Base.DSL
     //Item4 = LastTriggered in ticks.
     using ConnectionState = Tuple<Connection, State, bool, IEnumerable<Connection>, long>;
 
+    /// <summary>
+    /// The base for the user rule stories
+    /// </summary>
     public class Logic
     {
         private State Input { get; set; }
@@ -44,6 +47,9 @@ namespace Domotics.Base.DSL
         }
     }
 
+    /// <summary>
+    /// Extension methods that make up the dsl.
+    /// </summary>
     public static class Extentions
     {
         /// <summary>
@@ -145,8 +151,13 @@ namespace Domotics.Base.DSL
         }
     }
 
+    /// <summary>
+    /// An exception that fires when there is a logical error. For example: when an output connection is pushed.
+    /// </summary>
+    [Serializable]
     public class LogicException : Exception
     {
+        /// <inherit-doc/>
         public LogicException(string message) : base (message)
         {
             

@@ -20,6 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <DocumentationFile>bin\Debug\Domotics.Base.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,7 +53,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="IRuleLogic.cs" />
-    <Compile Include="ServiceExternal.cs" />
     <Compile Include="StateChangeDirective.cs" />
     <Compile Include="StaticRuleStore.cs" />
   </ItemGroup>

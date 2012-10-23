@@ -12,15 +12,21 @@ namespace Domotics.Base
         public string Name { get; set; }
 
         /// <summary>
-        /// A longer name
+        /// Allows for Convenient conversion from string to Ste
         /// </summary>
-        public string Description { get; set; }
-
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static implicit operator State (string name)
         {
             return new State { Name = name };
         }
 
+        /// <summary>
+        /// Compares states on their names instead of their reference.
+        /// </summary>
+        /// <param name="left">the state</param>
+        /// <param name="right">the state</param>
+        /// <returns>a bool</returns>
         public static bool operator ==(State left, State right)
         {
             if (ReferenceEquals (left, right))
@@ -37,11 +43,18 @@ namespace Domotics.Base
 
         }
 
+        /// <summary>
+        /// Compares states on their names instead of their reference.
+        /// </summary>
+        /// <param name="left">the state</param>
+        /// <param name="right">the state</param>
+        /// <returns>a bool</returns>
         public static bool operator !=(State left, State right)
         {
             return !(left == right);
         }
 
+        /// <inherit-doc/>
         public override bool Equals (object obj)
         {
             if (obj == null) return false;
@@ -50,6 +63,7 @@ namespace Domotics.Base
             return state.Name == Name;
         }
 
+        /// <inherit-doc/>
         public override int GetHashCode ()
         {
             return Name.GetHashCode();
