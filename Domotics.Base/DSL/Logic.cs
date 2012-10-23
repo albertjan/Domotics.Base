@@ -26,6 +26,12 @@ namespace Domotics.Base.DSL
             LastTriggered = lastTriggered;
         }
 
+        /// <summary>
+        /// The start of a rule story.
+        /// </summary>
+        /// <param name="connectionName">the name of the input you want it to react on.</param>
+        /// <returns>the ConnectionState</returns>
+
         public ConnectionState When (string connectionName)
         {
             return new ConnectionState (Connections.First (c => c.Name == connectionName), Input, true, Connections, LastTriggered);
@@ -34,21 +40,45 @@ namespace Domotics.Base.DSL
 
     public static class Extentions
     {
+        /// <summary>
+        /// Continues the story when the input connection selected with When is pushed for less then 500 ms.
+        /// </summary>
+        /// <param name="conState">The state being passed around between the helper functions</param>
+        /// <returns>The ConnectionState</returns>
         public static ConnectionState IsPushed (this ConnectionState conState)
         {
             return conState.ChangesStateWithin ("in", "out", 500);
         }
 
+        /// <summary>
+        /// Continues the story when the input connection selected with When is held for atleast 500ms.
+        /// </summary>
+        /// <param name="conState">the ConnectionState</param>
+        /// <returns>the ConnectionState</returns>
         public static ConnectionState IsHeld (this ConnectionState conState)
         {
             return conState.IsHeldFor(500);
         }
 
+        /// <summary>
+        /// Continues the story when the input connection selected with When is held for the specfied number of milliseconds.
+        /// </summary>
+        /// <param name="conState">the ConnectionState</param>
+        /// <param name="millisecs">the number of milliseconds after which the story is continued.</param>
+        /// <returns>the ConnectionState</returns>
         public static ConnectionState IsHeldFor (this ConnectionState conState, int millisecs)
         {
             return conState.ChangesStateAfter ("in", "out", millisecs);
         }
 
+        /// <summary>
+        /// Continues the story when the input connection selected with When is pushed for less than the specified number of milliseconds and when the state changes from From to To.
+        /// </summary>
+        /// <param name="conState">the ConnectionState</param>
+        /// <param name="from">from State</param>
+        /// <param name="to">to State</param>
+        /// <param name="millisecs">the specified number of milliseconds before which the state has to change.</param>
+        /// <returns>the ConnectionState</returns>
         public static ConnectionState ChangesStateWithin (this ConnectionState conState, State from, State to, int millisecs)
         {
             if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
