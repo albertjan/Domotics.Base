@@ -47,21 +47,19 @@ namespace Domotics.Base
                 AllRules.Where(r => r.Connections.Any(c => c.Name == args.Connection.Name)).Select(
                     r => r.Fire(r.Connections.First(r1 => r1.Name == args.Connection.Name), args.NewState)).ToList();
 
-            foreach (var statechangedirective in statechangedirectives)
+            var external = (IExternalSource)sender;
+
+
+            //very unclear need to do something about the nomenclature.
+            foreach (var stateChangeDirective in from statechangedirective in statechangedirectives
+                                                 where statechangedirective != null 
+                                                    from stateChangeDirective in statechangedirective 
+                                                    where stateChangeDirective != null 
+                                                    select stateChangeDirective)
             {
-                if (statechangedirective == null) continue;
-                
-                foreach (var stateChangeDirective in statechangedirective)
-                {
-                    var external = (IExternalSource) sender;
-                    //get the statechange directive from the rule
-                    //var statechangedirective = r1.Fire (r1.Connections.First (r => r.Name == args.Connection.Name), args.NewState);
-                    //set the state on the external source.
-                    if (stateChangeDirective != null)
-                        external.SetState(stateChangeDirective.Connection, stateChangeDirective.NewState.Name);
-                    external.SetState(args.Connection, args.NewState.Name);
-                }
+                external.SetState(stateChangeDirective.Connection, stateChangeDirective.NewState.Name);
             }
+            external.SetState (args.Connection, args.NewState.Name);
         }
 
         /// <summary>

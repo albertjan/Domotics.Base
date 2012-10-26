@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DistributorFixture.cs" />
     <Compile Include="Fakes\FakeExternalSource.cs" />
     <Compile Include="Fakes\FakeRuleStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
