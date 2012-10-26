@@ -22,8 +22,13 @@ namespace Domotics.Base.Test
         [Test]
         public void InputEventHandlerTest()
         {
+            //given
             Assert.AreEqual ("out", FakeExternalSource.Connections.First (c => c.Name == "knopje").CurrentState.Name);
+            
+            //when
             FakeExternalSource.FireInputEvent("knopje", "in");
+        
+            //then
             Assert.That ("in" == FakeExternalSource.Connections.First (c => c.Name == "knopje").CurrentState.Name, Is.True.After (100));
         }
     }
