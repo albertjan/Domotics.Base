@@ -28,10 +28,10 @@ namespace Domotics.Base.DSL
         /// <param name="connection">The connection that caused this rule to fire.</param>
         /// <param name="connections">The connection that this rule talks about.</param>
         /// <param name="lastTriggered">The last time the rule was triggered.</param>
-        public Logic (State input, Connection connection, List<Connection> connections, long lastTriggered)
+        public Logic (State input, /* Connection connection, */ List<Connection> connections, long lastTriggered)
         {
             Input = input;
-            Connection = connection;
+            //Connection = connection;
             Connections = connections;
             LastTriggered = lastTriggered;
         }

@@ -51,11 +51,11 @@ namespace Domotics.Base
                          public class " + GenerateClassName() + @" : IRuleLogic
                          { 
                              public IEnumerable<StateChangeDirective> GetNewState(State input, 
-                                                                      Connection connection, 
+                                                                      /* Connection connection, */
                                                                       List<Connection> connections, 
                                                                       long lastTriggered)
                              { 
-                                 return new Logic(input, connection, connections, lastTriggered)." + logic + @";
+                                 return new Logic(input, /*connection, */ connections, lastTriggered)." + logic + @";
                              }
                          }
                      }";
