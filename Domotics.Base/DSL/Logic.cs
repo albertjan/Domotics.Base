@@ -137,7 +137,7 @@ namespace Domotics.Base.DSL
         {
             return s =>
             {
-                if (!connection.Item3) return new StateChangeDirective[] { null } ;
+                if (!connection.Item3) return new[] { StateChangeDirective.NoOperation } ;
 
                 return new[]
                            {

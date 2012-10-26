@@ -44,18 +44,14 @@ namespace Domotics.Base
         {
             //find all the rules that say something this connection. fire then collect the changes to be made to the states.
             var statechangedirectives =
-                AllRules.Where(r => r.Connections.Any(c => c.Name == args.Connection.Name)).Select(
-                    r => r.Fire(r.Connections.First(r1 => r1.Name == args.Connection.Name), args.NewState)).ToList();
+                AllRules.Where(r => r.Connections.Any(c => c.Name == args.Connection.Name))
+                        .Select(r => r.Fire(r.Connections.First(r1 => r1.Name == args.Connection.Name), args.NewState))
+                        .SelectMany(s => s);
 
             var external = (IExternalSource)sender;
-
-
+            
             //very unclear need to do something about the nomenclature.
-            foreach (var stateChangeDirective in from statechangedirective in statechangedirectives
-                                                 where statechangedirective != null 
-                                                    from stateChangeDirective in statechangedirective 
-                                                    where stateChangeDirective != null 
-                                                    select stateChangeDirective)
+            foreach (var stateChangeDirective in statechangedirectives.Where(s => s != StateChangeDirective.NoOperation))
             {
                 external.SetState(stateChangeDirective.Connection, stateChangeDirective.NewState.Name);
             }

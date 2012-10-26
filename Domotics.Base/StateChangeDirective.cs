@@ -5,6 +5,13 @@ namespace Domotics.Base
     /// </summary>
     public class StateChangeDirective
     {
+        private static readonly StateChangeDirective _stateChangeDirective;
+
+        static StateChangeDirective()
+        {
+            _stateChangeDirective = new StateChangeDirective();
+        }
+    
         /// <summary>
         /// the new state
         /// </summary>
@@ -13,5 +20,10 @@ namespace Domotics.Base
         /// of this connection.
         /// </summary>
         public Connection Connection { get; set; }
+
+        /// <summary>
+        /// Is return when no change is required.
+        /// </summary>
+        public static StateChangeDirective NoOperation { get { return _stateChangeDirective; } }
     }
 }
