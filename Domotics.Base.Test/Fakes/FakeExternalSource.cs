@@ -24,6 +24,11 @@ namespace Domotics.Base.Test.Fakes
                                           {
                                               CurrentState = "out",
                                               AvailableStates = new List<State> { "in", "out" }
+                                          },
+                                      new Connection("knopje2", ConnectionType.In)
+                                          {
+                                              CurrentState = "out",
+                                              AvailableStates = new List<State> { "in", "out" }
                                           }
                                   };
         }

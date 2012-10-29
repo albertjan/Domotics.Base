@@ -74,7 +74,7 @@ namespace Domotics.Base
         public IEnumerable<StateChangeDirective> Fire(Connection connection, State newState)
         {
             Debug.WriteLine("Rule with logic: " + LogicText + " fireing!");
-            var scd = Logic.GetNewState(newState, /*connection, */ Connections.ToList(), LastTriggered);
+            var scd = Logic.GetNewState(newState, connection, Connections.ToList(), LastTriggered);
             LastTriggered = DateTime.Now.Ticks;
             return scd;
         }

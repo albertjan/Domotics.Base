@@ -9,7 +9,8 @@ namespace Domotics.Base.DSL
     //Item2 = The new state
     //Item3 = A bool that causes the rule to return null when set to false. i.e. no change.
     //Item4 = LastTriggered in ticks.
-    using ConnectionState = Tuple<Connection, State, bool, IEnumerable<Connection>, long>;
+    //Item5 = The connection whos state is to change
+    using ConnectionState = Tuple<Connection, State, bool, IEnumerable<Connection>, long, Connection>;
 
     /// <summary>
     /// The base for the user rule stories
@@ -20,7 +21,10 @@ namespace Domotics.Base.DSL
         private Connection Connection { get; set; }
         private List<Connection> Connections { get; set; }
         private long LastTriggered { get; set; }
-        
+        private Connection AffectedConnection { get; set; }
+        private bool ShouldContinue { get; set; }
+        public List<StateChangeDirective> CollectedStateChanges { get; private set; }
+
         /// <summary>
         /// The start of the story collecting all the 
         /// </summary>
@@ -28,12 +32,13 @@ namespace Domotics.Base.DSL
         /// <param name="connection">The connection that caused this rule to fire.</param>
         /// <param name="connections">The connection that this rule talks about.</param>
         /// <param name="lastTriggered">The last time the rule was triggered.</param>
-        public Logic (State input, /* Connection connection, */ List<Connection> connections, long lastTriggered)
+        public Logic (State input, Connection connection,  List<Connection> connections, long lastTriggered)
         {
             Input = input;
-            //Connection = connection;
+            Connection = connection;
             Connections = connections;
             LastTriggered = lastTriggered;
+            CollectedStateChanges = new List<StateChangeDirective>();
         }
 
         /// <summary>
@@ -41,67 +46,84 @@ namespace Domotics.Base.DSL
         /// </summary>
         /// <param name="connectionName">the name of the input you want it to react on.</param>
         /// <returns>the ConnectionState</returns>
-        public ConnectionState When (string connectionName)
+        /// <exception cref="LogicException">Throws when the selected connection is not present in the list of connections.</exception>
+        public Logic When (string connectionName)
         {
-            return new ConnectionState (Connections.First (c => c.Name == connectionName), Input, true, Connections, LastTriggered);
-        }
-    }
+            var selectedConnection = Connections.FirstOrDefault(c => c.Name == connectionName);
+            if (selectedConnection == null) 
+                throw new LogicException("Connection this rule should fire (" + connectionName + ") on is not listed in the connections (" + Connections.Aggregate("", ((s, c) => s + c.Name + "," )) + ").");
 
-    /// <summary>
-    /// Extension methods that make up the dsl.
-    /// </summary>
-    public static class Extentions
-    {
+            ShouldContinue = Connection.Name == connectionName;
+
+            return this;
+        }
+    
         /// <summary>
         /// Continues the story when the input connection selected with When is pushed for less then 500 ms.
         /// </summary>
-        /// <param name="conState">The state being passed around between the helper functions</param>
         /// <returns>The ConnectionState</returns>
-        public static ConnectionState IsPushed (this ConnectionState conState)
+        public Logic IsPushed ()
         {
-            return conState.ChangesStateWithin ("in", "out", 500);
+            return ChangesStateWithin ("in", "out", 500);
+        }
+
+        /// <summary>
+        /// Continues the story when the first connection selector `When` has not selected an connection, and when this selector does select a connection. Effectively performs an exclusive or, but in non formal language `Or` is most of the time exclusive.
+        /// </summary>
+        /// <param name="connectionName">the name of the connection to be selected</param>
+        /// <returns>the connectionstate</returns>
+        /// <exception cref="LogicException">When the connection selected upon is not present.</exception>
+        public Logic OrWhen (string connectionName)
+        {
+            var selectedConnection = Connections.FirstOrDefault(c => c.Name == connectionName);
+
+            if (selectedConnection == null)
+                throw new LogicException("Connection this rule should fire (" + connectionName +
+                                         ") on is not listed in the connections (" +
+                                         Connections.Aggregate("", ((s, c) => s + "," + c.Name)) + ").");
+
+            ShouldContinue = Connection.Name == connectionName ^ ShouldContinue;
+
+            return this;
         }
 
         /// <summary>
         /// Continues the story when the input connection selected with When is held for atleast 500ms.
         /// </summary>
-        /// <param name="conState">the ConnectionState</param>
         /// <returns>the ConnectionState</returns>
-        public static ConnectionState IsHeld (this ConnectionState conState)
+        public Logic IsHeld ()
         {
-            return conState.IsHeldFor(500);
+            return IsHeldFor(500);
         }
 
         /// <summary>
         /// Continues the story when the input connection selected with When is held for the specfied number of milliseconds.
         /// </summary>
-        /// <param name="conState">the ConnectionState</param>
         /// <param name="millisecs">the number of milliseconds after which the story is continued.</param>
         /// <returns>the ConnectionState</returns>
-        public static ConnectionState IsHeldFor (this ConnectionState conState, int millisecs)
+        public Logic IsHeldFor (int millisecs)
         {
-            return conState.ChangesStateAfter ("in", "out", millisecs);
+            return ChangesStateAfter ("in", "out", millisecs);
         }
 
         /// <summary>
         /// Continues the story when the input connection selected with When is pushed for less than the specified number of milliseconds and when the state changes from From to To.
         /// </summary>
-        /// <param name="conState">the ConnectionState</param>
         /// <param name="from">from State</param>
         /// <param name="to">to State</param>
         /// <param name="millisecs">the specified number of milliseconds before which the state has to change.</param>
         /// <returns>the ConnectionState</returns>
-        public static ConnectionState ChangesStateWithin (this ConnectionState conState, State from, State to, int millisecs)
+        public Logic ChangesStateWithin (State from, State to, int millisecs)
         {
-            if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
+            if (Connection.Type == ConnectionType.In || Connection.Type == ConnectionType.Both)
             {
-                Debug.WriteLine ("LT: " + conState.Item5 + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - conState.Item5) + ", " + (conState.Item5 + (millisecs * 10000) > DateTime.Now.Ticks));
+                Debug.WriteLine ("LT: " + LastTriggered + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - LastTriggered) + ", " + (LastTriggered + (millisecs * 10000) > DateTime.Now.Ticks));
 
-                return new ConnectionState(conState.Item1, conState.Item2,
-                                           (conState.Item1.CurrentState == from && conState.Item2 == to) &&
-                                           conState.Item5 + (millisecs*10000) > DateTime.Now.Ticks,
-                                           conState.Item4,
-                                           conState.Item5);
+                ShouldContinue  = ShouldContinue && ((Connection.CurrentState == from && Input == to) &&
+                                           LastTriggered + (millisecs*10000) > DateTime.Now.Ticks);
+
+
+                return this;
             }
             throw new LogicException ("Output Connections cant be \"Pushed\"");
         }
@@ -109,46 +131,88 @@ namespace Domotics.Base.DSL
         /// <summary>
         /// Continues the story when the input connection selected with When is pushed for atleast the specified number of milliseconds and when the state changes from From to To.
         /// </summary>
-        /// <param name="conState">the ConnectionState</param>
         /// <param name="from">from State</param>
         /// <param name="to">to State</param>
         /// <param name="millisecs">the specified number of milliseconds before which the state has to change.</param>
         /// <returns>the ConnectionState</returns>
-        public static ConnectionState ChangesStateAfter (this ConnectionState conState, State from, State to, int millisecs)
+        public Logic ChangesStateAfter (State from, State to, int millisecs)
         {
-            if (conState.Item1.Type == ConnectionType.In || conState.Item1.Type == ConnectionType.Both)
+            if (Connection.Type == ConnectionType.In || Connection.Type == ConnectionType.Both)
             {
-                Debug.WriteLine ("LT: " + conState.Item5 + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - conState.Item5) + ", " + (conState.Item5 + (millisecs * 10000) < DateTime.Now.Ticks));
-                return new ConnectionState(conState.Item1, conState.Item2,
-                                           (conState.Item1.CurrentState == from && conState.Item2 == to) &&
-                                           conState.Item5 + (millisecs*10000) < DateTime.Now.Ticks, conState.Item4,
-                                           conState.Item5);
+                ShouldContinue = ShouldContinue && ((Connection.CurrentState == from && Input == to) &&
+                                           LastTriggered + (millisecs*10000) < DateTime.Now.Ticks);
+
+                Debug.WriteLine ("LT: " + LastTriggered + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - LastTriggered) + ", " + (LastTriggered + (millisecs * 10000) < DateTime.Now.Ticks));
+                return this;
             }
             throw new LogicException ("Output Connections cant be \"Pushed\"");
         }
 
         /// <summary>
+        /// Conveniance method changes `Turn("name").OnWhenItsOff().OffWhenItsOn()` to `Switch()`
+        /// Switches from on to off and the other way round.
+        /// </summary>
+        /// <param name="connectionName">the name of the affected connection</param>
+        /// <returns>A list of changes to be made to the state of the connections.</returns>
+        public Logic Switch(string connectionName)
+        {
+            return Turn(connectionName).OnWhenItsOff().OffWhenItsOn();
+        } 
+        
+        /// <summary>
+        /// Adds a statechangedirective when the state is from and changes it to to.
+        /// </summary>
+        /// <param name="from">when to change the state</param>
+        /// <param name="to">to what to change the state</param>
+        /// <returns>the current state.</returns>
+        public Logic Change(State from, State to)
+        {
+            if (AffectedConnection.CurrentState == from && ShouldContinue)
+            {
+                CollectedStateChanges.Add(new StateChangeDirective
+                                              {
+                                                  Connection = AffectedConnection,
+                                                  NewState = to
+                                              });
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Conveniance method. for single action buttons.
+        /// </summary>
+        /// <returns>the state</returns>
+        public Logic OnWhenItsOff()
+        {
+            return Change("off", "on");
+        }
+
+        /// <summary>
+        /// another conveniance method for single action buttons.
+        /// </summary>
+        /// <returns>the state</returns>
+        public Logic OffWhenItsOn ()
+        {
+            return Change("on", "off");
+        }
+        
+        /// <summary>
         /// Returns a func that can be called to return the StateChangeDirectives that are a result from the story.
         /// </summary>
-        /// <param name="connection">the ConnectionState</param>
         /// <param name="which">a selector to select </param>
         /// <returns>the Func that can be called.</returns>
-        public static Func<string, IEnumerable<StateChangeDirective>> Turn (this ConnectionState connection, string which)
+        public Logic Turn (string which)
         {
-            return s =>
-            {
-                if (!connection.Item3) return new[] { StateChangeDirective.NoOperation } ;
+            var selectedConnection = Connections.FirstOrDefault (c => c.Name == which);
+            if (selectedConnection == null)
+                throw new LogicException ("Connection this rule should fire (" + which + ") on is not listed in the connections (" + Connections.Aggregate ("", ((s, c) => s + c.Name + ",")) + ").");
 
-                return new[]
-                           {
-                               new StateChangeDirective
-                                   {
-                                       Connection = connection.Item4.First(c => c.Name == which),
-                                       NewState = s
-                                   }
-                           };
-            };
+            AffectedConnection = selectedConnection;
+
+            return this;
         }
+
+        
     }
 
     /// <summary>
