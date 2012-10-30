@@ -23,6 +23,9 @@ namespace Domotics.Base.DSL
         private long LastTriggered { get; set; }
         private Connection AffectedConnection { get; set; }
         private bool ShouldContinue { get; set; }
+        /// <summary>
+        /// The StateChangeDirectives collected by the rule.
+        /// </summary>
         public List<StateChangeDirective> CollectedStateChanges { get; private set; }
 
         /// <summary>
