@@ -23,10 +23,11 @@ namespace Domotics.Base
                 ruleStore.Distributor = this;
             }
 
-            //subscribe to all input events on all external sources.
+            //subscribe to all input events on all external sources. And call the delegate.
             foreach (var externalSource in ExternalSources)
             {
                 externalSource.Input += ExternalSourceInput;
+                externalSource.DistributorInitializationDelegate(this);
             }
         }
 

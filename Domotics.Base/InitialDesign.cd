@@ -1,60 +1,108 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Domotics.Base.Distributor">
-    <Position X="2.5" Y="4.75" Width="1.5" />
+    <Position X="0.5" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAACAABAAAAAAAgAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <HashCode>AAAAAAAAAABCAABAAAAAAIgAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Distributor.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Externals" />
+      <Property Name="ExternalSources" />
+      <Property Name="RuleStores" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Domotics.Base.StaticRuleStore">
-    <Position X="5.5" Y="7" Width="1.5" />
+    <Position X="0.5" Y="9.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AgAAAAAAAAAAAAAAAAgAAAAAAAAAABAAAAAAAAAAgAA=</HashCode>
       <FileName>StaticRuleStore.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Domotics.Base.Rule">
-    <Position X="5.5" Y="4.75" Width="1.5" />
+    <Position X="6.5" Y="7.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAEAAAAACAAACAAAAA=</HashCode>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAABAAEAAAAACAAAGAAAAA=</HashCode>
       <FileName>Rule.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Logic" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Connections" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Domotics.Base.Connection">
-    <Position X="5.5" Y="2.5" Width="1.5" />
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <AssociationLine Name="CurrentState" Type="Domotics.Base.State" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.906" Y="2.247" />
+        <Point X="1.906" Y="2.75" />
+        <Point X="3.5" Y="2.75" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAgAAAAEAAACQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAEAEAAACQAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>Connection.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Type" />
+      <Property Name="CurrentState" />
     </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="AvailableStates" />
+    </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Domotics.Base.ServiceExternal">
-    <Position X="8.5" Y="2.5" Width="1.5" />
+  <Class Name="Domotics.Base.State">
+    <Position X="3.5" Y="2" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAACAABAA=</HashCode>
-      <FileName>ServiceExternal.cs</FileName>
+      <HashCode>AAAAgAAAAAAAAAAAgAAAAAQAAAAAAIAAAAAAAAAAAiA=</HashCode>
+      <FileName>State.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="Domotics.Base.IExternal">
-    <Position X="2.5" Y="2.5" Width="1.5" />
+  <Class Name="Domotics.Base.DSL.Logic">
+    <Position X="9" Y="10" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAACBACIEAAAACAAAAFAgCCAAAAAABgHAAAAg=</HashCode>
+      <FileName>DSL\Logic.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Domotics.Base.RuleLogicCompiler">
+    <Position X="5.5" Y="10" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAABEA=</HashCode>
+      <FileName>RuleLogicCompiler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Domotics.Base.IExternalSource">
+    <Position X="3.5" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAACAAAAA=</HashCode>
-      <FileName>IExternal.cs</FileName>
+      <FileName>IExternalSource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Domotics.Base.IRuleStore">
+    <Position X="3.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>IRuleStore.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Connections" />
+      <Property Name="Rules" />
     </ShowAsCollectionAssociation>
   </Interface>
+  <Interface Name="Domotics.Base.IRuleLogic">
+    <Position X="9" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IRuleLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Enum Name="Domotics.Base.ConnectionType">
-    <Position X="5.5" Y="0.5" Width="1.5" />
+    <Position X="3.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
       <FileName>ConnectionType.cs</FileName>

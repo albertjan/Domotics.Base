@@ -15,14 +15,14 @@ namespace Domotics.Base
         /// </summary>
         /// <param name="logic">the story.</param>
         /// <param name="connections">and the connections it wan't to say something about.</param>
-        public Rule(string logic, IEnumerable<string> connections)
+        public Rule(string logic, params string[] connections)
         {
             LogicText = logic;
             Logic = RuleLogicCompiler.Compile(logic);
-            Connections = new List<Connection> ();
+            Connections = new List<Connection>();
             foreach (var connection in connections)
             {
-                ((List<Connection>) Connections).Add(new Connection(connection));
+                ((List<Connection>)Connections).Add(new Connection(connection));
             }
         }
 

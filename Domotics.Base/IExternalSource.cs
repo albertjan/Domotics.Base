@@ -9,6 +9,11 @@ namespace Domotics.Base
     public interface IExternalSource
     {
         /// <summary>
+        /// Is called after the distributor is initialized. 
+        /// </summary>
+        Action<Distributor> DistributorInitializationDelegate { get; }
+
+        /// <summary>
         /// event that fires when something has changed
         /// </summary>
         event ConnectionStateChangedEventHandler Input;

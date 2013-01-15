@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -33,7 +34,9 @@ namespace Domotics.Base.Test.Fakes
                                   };
         }
 
-        private List<Connection> TestConnections { get; set; } 
+        private List<Connection> TestConnections { get; set; }
+
+        public Action<Distributor> DistributorInitializationDelegate { get; private set; }
 
         public event ConnectionStateChangedEventHandler Input;
         public IEnumerable<Connection> Connections { get { return TestConnections; } }
