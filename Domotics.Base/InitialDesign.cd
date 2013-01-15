@@ -28,30 +28,6 @@
     <ShowAsAssociation>
       <Property Name="Logic" />
     </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Property Name="Connections" />
-    </ShowAsCollectionAssociation>
-  </Class>
-  <Class Name="Domotics.Base.Connection">
-    <Position X="0.75" Y="0.5" Width="1.5" />
-    <AssociationLine Name="CurrentState" Type="Domotics.Base.State" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="1.906" Y="2.247" />
-        <Point X="1.906" Y="2.75" />
-        <Point X="3.5" Y="2.75" />
-      </Path>
-    </AssociationLine>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAEAAACQAAAAAAAAAAQAAAAAAAAA=</HashCode>
-      <FileName>Connection.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Type" />
-      <Property Name="CurrentState" />
-    </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Property Name="AvailableStates" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Domotics.Base.State">
     <Position X="3.5" Y="2" Width="1.5" />
@@ -80,7 +56,7 @@
   <Interface Name="Domotics.Base.IExternalSource">
     <Position X="3.5" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAACAAAAA=</HashCode>
+      <HashCode>AAAABAAAAAAAAAAAAAAQAAAAEAAAAAAAAAAAACAAAAA=</HashCode>
       <FileName>IExternalSource.cs</FileName>
     </TypeIdentifier>
   </Interface>
