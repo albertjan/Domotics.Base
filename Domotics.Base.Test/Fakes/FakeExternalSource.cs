@@ -62,5 +62,10 @@ namespace Domotics.Base.Test.Fakes
                 Input(this, args);
             }
         }
+
+        public Action<Distributor> MyDistributorInitializationDelegate
+        {
+            set { DistributorInitializationDelegate = value; }
+        }
     }
 }

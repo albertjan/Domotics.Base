@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Domotics.Base.Test.Fakes;
 using NUnit.Framework;
 
@@ -57,6 +58,25 @@ namespace Domotics.Base.Test
             //then
             Assert.IsTrue(Distributor.RuleStores.First().Rules.Count() == 1);
             Assert.IsTrue(Distributor.RuleStores.First().Rules.First().Connections.Count() == 2);
+        }
+
+        [Test]
+        public void DistributorInistializationDelegateTest()
+        {
+            //given
+            var called = false;
+            var externalSource = Distributor.ExternalSources.First();
+            ((FakeExternalSource) externalSource).MyDistributorInitializationDelegate = d =>
+            {
+                Assert.IsNotNull(d);
+                called = true;
+            };
+
+            //when
+            new Distributor(new[] {externalSource}, Distributor.RuleStores);
+
+            //then
+            Assert.IsTrue(called);
         }
     }
 }

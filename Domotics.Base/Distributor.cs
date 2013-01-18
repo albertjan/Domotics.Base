@@ -27,7 +27,8 @@ namespace Domotics.Base
             foreach (var externalSource in ExternalSources)
             {
                 externalSource.Input += ExternalSourceInput;
-                externalSource.DistributorInitializationDelegate(this);
+                if (externalSource.DistributorInitializationDelegate != null)
+                    externalSource.DistributorInitializationDelegate(this);
             }
         }
 
