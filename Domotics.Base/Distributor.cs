@@ -46,10 +46,13 @@ namespace Domotics.Base
         {
             //find all the rules that say something this connection. fire then collect the changes to be made to the states.
             var statechangedirectives =
-                AllRules.Where(r => r.Connections.Any(c => c.Name == args.Connection.Name))
+                AllRules.Where (r => r.Connections.Any(c => c.Name == args.Connection.Name))
                         .Select(r => r.Fire(r.Connections.First(r1 => r1.Name == args.Connection.Name), args.NewState))
                         .SelectMany(s => s);
 
+
+            //do not only send the message back to the source it came from also check if others want to know
+            //about it.
             var external = (IExternalSource)sender;
             
             //very unclear need to do something about the nomenclature.
@@ -77,7 +80,9 @@ namespace Domotics.Base
         /// <returns>a list of connections.</returns>
         public IEnumerable<Connection> ResolveConnections(IEnumerable<string> connectionNames)
         {
-            return ExternalSources.SelectMany(e => e.Connections).Join(connectionNames, c => c.Name, s => s, (c, s) => c).ToList();
-        }
+            return ExternalSources.SelectMany(e => e.Connections)
+                                  .Where(c => !c.Copied)
+                                  .Join(connectionNames, c => c.Name, s => s, (c, s) => c)
+                                  .ToList();
     }
 }
