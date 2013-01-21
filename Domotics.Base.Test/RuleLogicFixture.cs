@@ -13,7 +13,7 @@ namespace Domotics.Base.Test
         [SetUp]
         public void Init ()
         {
-            Distributor = new Distributor(new[] {new FakeExternalSource()}, new[] {new FakeRuleStore()});
+            Distributor = new Distributor(new IExternalSource[] { new FakeExternalSource(), new AnotherFakeExternalSource() }, new[] {new FakeRuleStore()});
         }
 
         private Distributor Distributor { get; set; }
@@ -60,6 +60,21 @@ namespace Domotics.Base.Test
             ((FakeExternalSource) Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
             ((FakeExternalSource) Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "out");
             
+            //then
+            Assert.AreEqual("on", Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje").CurrentState.Name);
+        }
+
+        [Test]
+        public void InputEventFromCopiedConnectionRuleFireTest()
+        {
+            //given
+            var rule = new Rule(@"When(""knopje"").IsPushed().Switch(""lampje"")", new[] { "knopje", "lampje" });
+            Distributor.RuleStores.First().AddRule(rule);
+
+            //when
+            ((AnotherFakeExternalSource)Distributor.ExternalSources.First(t => t is AnotherFakeExternalSource)).FireInputEvent("knopje", "in");
+            ((AnotherFakeExternalSource)Distributor.ExternalSources.First(t => t is AnotherFakeExternalSource)).FireInputEvent("knopje", "out");
+
             //then
             Assert.AreEqual("on", Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje").CurrentState.Name);
         }

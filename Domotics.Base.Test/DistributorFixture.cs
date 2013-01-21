@@ -12,8 +12,11 @@ namespace Domotics.Base.Test
         public void Init()
         {
             FakeExternalSource = new FakeExternalSource();
-            Distributor = new Distributor(new[] { FakeExternalSource }, new[] { new FakeRuleStore() });
+            AnotherFakeExternalSource = new AnotherFakeExternalSource();
+            Distributor = new Distributor(new IExternalSource[] { FakeExternalSource, AnotherFakeExternalSource }, new[] { new FakeRuleStore() });
         }
+
+        private AnotherFakeExternalSource AnotherFakeExternalSource { get; set; }
 
         private FakeExternalSource FakeExternalSource { get; set; }
 
@@ -41,6 +44,20 @@ namespace Domotics.Base.Test
             //when
             FakeExternalSource.FireInputEvent("knopje", "in");
             FakeExternalSource.FireInputEvent("knopje", "out");
+
+            //then
+            Assert.That("out" == FakeExternalSource.Connections.First(c => c.Name == "knopje").CurrentState.Name, Is.True.After(100));
+        }
+
+        [Test]
+        public void CopiedInputEventHandlerTest()
+        {
+            //given
+            Assert.AreEqual("out", AnotherFakeExternalSource.Connections.First(c => c.Name == "knopje").CurrentState.Name);
+
+            //when
+            AnotherFakeExternalSource.FireInputEvent("knopje", "in");
+            AnotherFakeExternalSource.FireInputEvent("knopje", "out");
 
             //then
             Assert.That("out" == FakeExternalSource.Connections.First(c => c.Name == "knopje").CurrentState.Name, Is.True.After(100));

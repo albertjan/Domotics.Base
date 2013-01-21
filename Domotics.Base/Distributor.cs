@@ -53,14 +53,22 @@ namespace Domotics.Base
 
             //do not only send the message back to the source it came from also check if others want to know
             //about it.
-            var external = (IExternalSource)sender;
+            var externals = ExternalSources.SelectMany(e => e.Connections, (e1, c1) => new { ExternalSource = e1, Connection = c1 }).ToList();
             
             //very unclear need to do something about the nomenclature.
             foreach (var stateChangeDirective in statechangedirectives.Where(s => s != StateChangeDirective.NoOperation))
             {
-                external.SetState(stateChangeDirective.Connection, stateChangeDirective.NewState.Name);
+                var directive = stateChangeDirective;
+                foreach (var external in externals.Where(e => e.Connection.Name == directive.Connection.Name).Select(e => e.ExternalSource))
+                {
+                    external.SetState (directive.Connection, directive.NewState.Name);
+                }
             }
-            external.SetState (args.Connection, args.NewState.Name);
+            if (!args.Connection.Copied)
+                ((IExternalSource)sender).SetState(args.Connection, args.NewState.Name);
+            else
+                externals.First(t => t.Connection.Name == args.Connection.Name && !t.Connection.Copied).ExternalSource.
+                    SetState(args.Connection, args.NewState.Name);
         }
 
         /// <summary>
@@ -84,5 +92,6 @@ namespace Domotics.Base
                                   .Where(c => !c.Copied)
                                   .Join(connectionNames, c => c.Name, s => s, (c, s) => c)
                                   .ToList();
+        }
     }
 }

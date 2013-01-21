@@ -58,6 +58,8 @@ namespace Domotics.Base.DSL
 
             ShouldContinue = Connection.Name == connectionName;
 
+            Debug.Print("Connection: " + Connection.Name + " looking for: " + connectionName + " (" +  (Connection.Name == connectionName) + ")");
+
             return this;
         }
     
@@ -122,6 +124,8 @@ namespace Domotics.Base.DSL
             {
                 Debug.WriteLine ("LT: " + LastTriggered + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - LastTriggered) + ", " + (LastTriggered + (millisecs * 10000) > DateTime.Now.Ticks));
 
+                Debug.WriteLine("CurrentState: " + Connection.CurrentState.Name + " From: " + from.Name + " Input:" + Input.Name + " To:" + to.Name + " Result: " + (Connection.CurrentState == from && Input == to) + "");
+
                 ShouldContinue  = ShouldContinue && ((Connection.CurrentState == from && Input == to) &&
                                            LastTriggered + (millisecs*10000) > DateTime.Now.Ticks);
 
@@ -170,7 +174,8 @@ namespace Domotics.Base.DSL
         /// <returns>the current state.</returns>
         public Logic Change(State from, State to)
         {
-            if (AffectedConnection.CurrentState == from && ShouldContinue)
+            Debug.Print("AffectedConnection: " + AffectedConnection.Name + " CurrentState: " + AffectedConnection.CurrentState.Name + " From: " + from + " ShouldContinue: " + ShouldContinue);
+            if (AffectedConnection.CurrentState.Name == from.Name && ShouldContinue)
             {
                 CollectedStateChanges.Add(new StateChangeDirective
                                               {
