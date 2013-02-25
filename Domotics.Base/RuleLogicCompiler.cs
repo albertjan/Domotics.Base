@@ -1,10 +1,8 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Domotics.Base
 {
@@ -68,7 +66,7 @@ namespace Domotics.Base
                              OutputAssembly = Path.GetRandomFileName ().Replace (".", "") + ".dll"
                          };
 
-            cp.ReferencedAssemblies.Add("Domotics.Base.dll");
+            cp.ReferencedAssemblies.Add ("Domotics.Base.dll");
             cp.ReferencedAssemblies.Add ("mscorlib.dll");
 
             var cdp = CodeDomProvider.CreateProvider ("CSharp").CompileAssemblyFromSource (cp, new[] { rl });
@@ -77,7 +75,9 @@ namespace Domotics.Base
 
             var irl = ass.GetTypes().First(t => t.GetInterfaces().Contains(typeof (IRuleLogic)));
 
-            return (IRuleLogic)Activator.CreateInstance(irl);
+            CompiledStories.Add(logic, (IRuleLogic)Activator.CreateInstance(irl));
+
+            return CompiledStories[logic];
         }
     }
 }

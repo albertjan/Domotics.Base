@@ -62,6 +62,12 @@ namespace Domotics.Base
         /// </summary>
         public State CurrentState { get; set; }
 
+        /// <summary>
+        /// Specifies whether this button should fire live events should only be used with buttons you want
+        /// to use with dimmable lights. It's more resource intensive.
+        /// </summary>
+        public bool Live { get; set; }
+
         /// <inherit-doc/>
         public override string ToString ()
         {

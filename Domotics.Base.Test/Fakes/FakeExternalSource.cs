@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.PlatformServices;
 
 namespace Domotics.Base.Test.Fakes
 {
@@ -30,6 +33,17 @@ namespace Domotics.Base.Test.Fakes
                                           {
                                               CurrentState = "out",
                                               AvailableStates = new List<State> { "in", "out" }
+                                          },
+                                      new Connection("knopje3", ConnectionType.In)
+                                          {
+                                              CurrentState = "out",
+                                              Live = true,
+                                              AvailableStates = new List<State> { "in", "out" }
+                                          },
+                                      new Connection("lampje3", ConnectionType.Out)
+                                          {
+                                              CurrentState = "out",
+                                              AvailableStates = new List<State> { "0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100" }
                                           }
                                   };
         }
@@ -48,9 +62,25 @@ namespace Domotics.Base.Test.Fakes
 
         public void FireInputEvent(string connectionName, string newstate)
         {
+            var con = Connections.First(c => c.Name == connectionName);
+            if (con.Live)
+            {
+                var eventPump = Observable.Generate(
+                    con.AvailableStates.First(), 
+                    i => i == con.AvailableStates.Last(), 
+                    i => i, 
+                    i => con.CurrentState,
+                    i => TimeSpan.FromMilliseconds(10), 
+                    Scheduler.Default);
+                eventPump.Subscribe(s => OnInput(new ConnectionStateChangedEventHandlerArgs()
+                                                 {
+                                                     Connection = con,
+                                                     NewState = s
+                                                 }));
+            }
             OnInput(new ConnectionStateChangedEventHandlerArgs
                         {
-                            Connection = Connections.First(c => c.Name == connectionName),
+                            Connection = con,
                             NewState = newstate
                         });
         }

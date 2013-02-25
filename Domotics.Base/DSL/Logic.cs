@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace Domotics.Base.DSL
@@ -58,7 +59,7 @@ namespace Domotics.Base.DSL
 
             ShouldContinue = Connection.Name == connectionName;
 
-            Debug.Print("Connection: " + Connection.Name + " looking for: " + connectionName + " (" +  (Connection.Name == connectionName) + ")");
+            Debug.WriteLineIf(Connection.Name == connectionName, "Connection: " + Connection.Name + " looking for: " + connectionName + " (" +  (Connection.Name == connectionName) + ")");
 
             return this;
         }
@@ -112,6 +113,33 @@ namespace Domotics.Base.DSL
         }
 
         /// <summary>
+        /// Continues the story when the input connection selected with When is held for a live stream of events every 100 miliseconds.
+        /// </summary>
+        /// <returns>the ConnectionState</returns>
+        public Logic IsLive()
+        {
+            return IsLiveFireEvery(100);
+        }
+
+        private Logic IsLiveFireEvery(int millisecs)
+        {
+            if (LastTriggered == 0)
+            {
+                ShouldContinue = true;
+                return this;
+            }
+           
+            if (LastTriggered + (millisecs * 10000) > DateTime.Now.Ticks)
+            {
+                ShouldContinue = true;
+                return this;
+            }
+
+            ShouldContinue = false;
+            return this;
+        }
+
+        /// <summary>
         /// Continues the story when the input connection selected with When is pushed for less than the specified number of milliseconds and when the state changes from From to To.
         /// </summary>
         /// <param name="from">from State</param>
@@ -122,7 +150,7 @@ namespace Domotics.Base.DSL
         {
             if (Connection.Type == ConnectionType.In || Connection.Type == ConnectionType.Both)
             {
-                Debug.WriteLine ("LT: " + LastTriggered + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - LastTriggered) + ", " + (LastTriggered + (millisecs * 10000) > DateTime.Now.Ticks));
+                Debug.WriteLineIf (LastTriggered + (millisecs * 10000) > DateTime.Now.Ticks, "LT: " + LastTriggered + ", N: " + DateTime.Now.Ticks + ", D: " + (DateTime.Now.Ticks - LastTriggered) + ", " + (LastTriggered + (millisecs * 10000) > DateTime.Now.Ticks));
 
                 Debug.WriteLine("CurrentState: " + Connection.CurrentState.Name + " From: " + from.Name + " Input:" + Input.Name + " To:" + to.Name + " Result: " + (Connection.CurrentState == from && Input == to) + "");
 
@@ -156,7 +184,7 @@ namespace Domotics.Base.DSL
         }
 
         /// <summary>
-        /// Conveniance method changes `Turn("name").OnWhenItsOff().OffWhenItsOn()` to `Switch()`
+        /// Conveniance method changes `Turn("name").OnWhenItsOff().OffWhenItsOn()` to `Switch("name")`
         /// Switches from on to off and the other way round.
         /// </summary>
         /// <param name="connectionName">the name of the affected connection</param>
@@ -174,7 +202,6 @@ namespace Domotics.Base.DSL
         /// <returns>the current state.</returns>
         public Logic Change(State from, State to)
         {
-            Debug.Print("AffectedConnection: " + AffectedConnection.Name + " CurrentState: " + AffectedConnection.CurrentState.Name + " From: " + from + " ShouldContinue: " + ShouldContinue);
             if (AffectedConnection.CurrentState.Name == from.Name && ShouldContinue)
             {
                 CollectedStateChanges.Add(new StateChangeDirective
@@ -182,6 +209,29 @@ namespace Domotics.Base.DSL
                                                   Connection = AffectedConnection,
                                                   NewState = to
                                               });
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a statechangedirective to increase the value of the state with the given
+        /// amout. Until it reaches max and then cylces to min.
+        /// </summary>
+        /// <param name="with">with howmuch the intstate should be increased</param>
+        /// <param name="max">after which it should cycle min</param>
+        /// <param name="min">to which level it should cycle after passing max</param>
+        /// <returns>the current state.</returns>
+        public Logic Increase(int with, int max, int min)
+        {
+            if (ShouldContinue)
+            {
+                var cur = int.Parse(AffectedConnection.CurrentState.Name);
+
+                CollectedStateChanges.Add(new StateChangeDirective
+                {
+                    Connection = AffectedConnection,
+                    NewState = ((cur += with) >= max ? cur : min).ToString(CultureInfo.InvariantCulture)
+                });
             }
             return this;
         }

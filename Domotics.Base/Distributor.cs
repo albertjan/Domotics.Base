@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace Domotics.Base
 {
@@ -27,6 +31,8 @@ namespace Domotics.Base
             foreach (var externalSource in ExternalSources)
             {
                 externalSource.Input += ExternalSourceInput;
+
+
                 if (externalSource.DistributorInitializationDelegate != null)
                     externalSource.DistributorInitializationDelegate(this);
             }
@@ -55,7 +61,6 @@ namespace Domotics.Base
             //about it.
             var externals = ExternalSources.SelectMany(e => e.Connections, (e1, c1) => new { ExternalSource = e1, Connection = c1 }).ToList();
             
-            //very unclear need to do something about the nomenclature.
             foreach (var stateChangeDirective in statechangedirectives.Where(s => s != StateChangeDirective.NoOperation))
             {
                 var directive = stateChangeDirective;

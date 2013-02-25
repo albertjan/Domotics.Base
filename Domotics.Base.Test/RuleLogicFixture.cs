@@ -42,7 +42,7 @@ namespace Domotics.Base.Test
             rule.LastTriggered = DateTime.Now.Ticks;
 
             //when
-            var chd = rule.Fire(new Connection("knopje", ConnectionType.In) {CurrentState = "in"}, "out");
+            var chd = rule.Fire(new Connection("knopje", ConnectionType.In) { CurrentState = "in" }, "out").ToList();
             
             //then
             Assert.AreEqual("lampje",chd.First().Connection.Name);
@@ -168,40 +168,51 @@ namespace Domotics.Base.Test
             Assert.AreEqual ("on", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje2").CurrentState.Name);
         }
 
-        [Test] 
-        public void HotelSwitch ()
+        [Test]
+        public void HotelSwitch()
         {
             //given
-            var rule1 = new Rule (@"When(""knopje"").OrWhen(""knopje2"").IsPushed().Switch(""lampje"")", new[] { "knopje", "knopje2", "lampje" });
-            Distributor.RuleStores.First ().AddRule (rule1);
-            
-            //when
-            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in");
-            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "out");
-
-            //then
-            Assert.That ("on" == Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje").CurrentState.Name, Is.True.After (100));
-
+            var rule1 = new Rule(@"When(""knopje"").OrWhen(""knopje2"").IsPushed().Switch(""lampje"")",
+                                 new[] {"knopje", "knopje2", "lampje"});
+            Distributor.RuleStores.First().AddRule(rule1);
 
             //when
-            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje2", "in");
-            ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje2", "out");
+            ((FakeExternalSource) Distributor.ExternalSources.First()).FireInputEvent("knopje", "in");
+            ((FakeExternalSource) Distributor.ExternalSources.First()).FireInputEvent("knopje", "out");
 
             //then
-            Assert.AreEqual ("off", Distributor.ExternalSources.First ().Connections.First (c => c.Name == "lampje").CurrentState.Name);
+            Assert.That(
+                "on" == Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje").CurrentState.Name,
+                Is.True.After(100));
 
 
+            //when
+            ((FakeExternalSource) Distributor.ExternalSources.First()).FireInputEvent("knopje2", "in");
+            ((FakeExternalSource) Distributor.ExternalSources.First()).FireInputEvent("knopje2", "out");
+
+            //then
+            Assert.AreEqual("off", Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje").CurrentState.Name);
         }
 
         [Test]
         public void RuleThatReactsOnAnInputThatDoesntExist ()
         {
             //given
-            var rule1 = new Rule(@"When(""knobje"").IsPushed().Switch(""lampje"")", new[] {"knopje", "lampje"});
+            var rule1 = new Rule(@"When(""knobje"").IsPushed().Switch(""lampje"")", "knopje", "lampje");
             Distributor.RuleStores.First().AddRule(rule1);
 
             //when & then
             Assert.Throws<LogicException> (() => ((FakeExternalSource)Distributor.ExternalSources.First ()).FireInputEvent ("knopje", "in"));
+        }
+
+        [Test]
+        public void RuleThatEmitsAStreamOfStateChangeDirectives()
+        {
+            //given
+            var rule1 = new Rule(@"When(""knopje"").IsLive().Increase(""lampje3"", 10, 100, 0)", "knopje", "lampje");
+            Distributor.RuleStores.First().AddRule(rule1);
+
+
         }
     }
 }
