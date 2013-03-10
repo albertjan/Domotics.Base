@@ -69,11 +69,12 @@ namespace Domotics.Base
                     external.SetState (directive.Connection, directive.NewState.Name);
                 }
             }
-            if (!args.Connection.Copied)
-                ((IExternalSource)sender).SetState(args.Connection, args.NewState.Name);
-            else
+
+            if (args.Connection.Copied)
                 externals.First(t => t.Connection.Name == args.Connection.Name && !t.Connection.Copied).ExternalSource.
                     SetState(args.Connection, args.NewState.Name);
+            else
+                ((IExternalSource)sender).SetState(args.Connection, args.NewState.Name);
         }
 
         /// <summary>

@@ -22,6 +22,7 @@ namespace Domotics.Base.DSL
         private Connection Connection { get; set; }
         private List<Connection> Connections { get; set; }
         private long LastTriggered { get; set; }
+        private long TimeOfLastChange { get; set; }
         private Connection AffectedConnection { get; set; }
         private bool ShouldContinue { get; set; }
         /// <summary>
@@ -36,15 +37,17 @@ namespace Domotics.Base.DSL
         /// <param name="connection">The connection that caused this rule to fire.</param>
         /// <param name="connections">The connection that this rule talks about.</param>
         /// <param name="lastTriggered">The last time the rule was triggered.</param>
-        public Logic (State input, Connection connection,  List<Connection> connections, long lastTriggered)
+        /// <param name="timeOfLastChange">The last time the rule resulted in a change</param>
+        public Logic (State input, Connection connection,  List<Connection> connections, long lastTriggered, long timeOfLastChange)
         {
             Input = input;
             Connection = connection;
             Connections = connections;
             LastTriggered = lastTriggered;
+            TimeOfLastChange = timeOfLastChange;
             CollectedStateChanges = new List<StateChangeDirective>();
         }
-
+        
         /// <summary>
         /// The start of a rule story.
         /// </summary>
@@ -113,29 +116,23 @@ namespace Domotics.Base.DSL
         }
 
         /// <summary>
-        /// Continues the story when the input connection selected with When is held for a live stream of events every 100 miliseconds.
+        /// Continues the story when the input connection selected with When is held for a live stream of events every 50 miliseconds.
         /// </summary>
         /// <returns>the ConnectionState</returns>
         public Logic IsLive()
         {
-            return IsLiveFireEvery(100);
+            return IsLiveFireEvery(50);
         }
 
-        private Logic IsLiveFireEvery(int millisecs)
+        /// <summary>
+        /// Continues the story when the input connection selected with When is held for a live stream of events every set amount miliseconds.
+        /// </summary>
+        /// <param name="millisecs">the amout of millisecs to wait after the last change</param>
+        /// <returns>the ConnectionState</returns>
+        public Logic IsLiveFireEvery(int millisecs)
         {
-            if (LastTriggered == 0)
-            {
-                ShouldContinue = true;
-                return this;
-            }
-           
-            if (LastTriggered + (millisecs * 10000) > DateTime.Now.Ticks)
-            {
-                ShouldContinue = true;
-                return this;
-            }
-
-            ShouldContinue = false;
+            Debug.WriteLine("Milliseconds since last change: " + (DateTime.Now.Ticks - TimeOfLastChange) / 10000);
+            ShouldContinue = TimeOfLastChange == 0 || (DateTime.Now.Ticks - TimeOfLastChange) / 10000 >= millisecs;
             return this;
         }
 
@@ -156,8 +153,7 @@ namespace Domotics.Base.DSL
 
                 ShouldContinue  = ShouldContinue && ((Connection.CurrentState == from && Input == to) &&
                                            LastTriggered + (millisecs*10000) > DateTime.Now.Ticks);
-
-
+                
                 return this;
             }
             throw new LogicException ("Output Connections cant be \"Pushed\"");
@@ -217,20 +213,26 @@ namespace Domotics.Base.DSL
         /// Adds a statechangedirective to increase the value of the state with the given
         /// amout. Until it reaches max and then cylces to min.
         /// </summary>
+        /// <param name="which">Which connections state it should increase</param>
         /// <param name="with">with howmuch the intstate should be increased</param>
         /// <param name="max">after which it should cycle min</param>
         /// <param name="min">to which level it should cycle after passing max</param>
         /// <returns>the current state.</returns>
-        public Logic Increase(int with, int max, int min)
+        public Logic Increase(string which, int with, int max, int min)
         {
-            if (ShouldContinue)
+            if (ShouldContinue && Input == "in")
             {
-                var cur = int.Parse(AffectedConnection.CurrentState.Name);
+                var selectedConnection = Connections.FirstOrDefault(c => c.Name == which);
+                if (selectedConnection == null)
+                    throw new LogicException("Connection this rule should fire (" + which + ") on is not listed in the connections (" + Connections.Aggregate("", ((s, c) => s + c.Name + ",")) + ").");
+
+               
+                var cur = int.Parse(selectedConnection.CurrentState.Name);
 
                 CollectedStateChanges.Add(new StateChangeDirective
                 {
-                    Connection = AffectedConnection,
-                    NewState = ((cur += with) >= max ? cur : min).ToString(CultureInfo.InvariantCulture)
+                    Connection = selectedConnection,
+                    NewState = (cur + with > max ? min : (cur + with)).ToString(CultureInfo.InvariantCulture)
                 });
             }
             return this;

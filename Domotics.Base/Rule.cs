@@ -44,6 +44,11 @@ namespace Domotics.Base
         public long LastTriggered { get; set; }
 
         /// <summary>
+        /// ticks since 1-1-1970 to the moment the rule resulted in a statechange directive.
+        /// </summary>
+        public long TimeOfLastChange { get; set; }
+
+        /// <summary>
         /// Checks wether the rules make sense.
         /// </summary>
         public bool Check ()
@@ -74,8 +79,9 @@ namespace Domotics.Base
         public IEnumerable<StateChangeDirective> Fire(Connection connection, State newState)
         {
             Debug.WriteLine("Rule with logic: " + LogicText + " fireing!");
-            var scd = Logic.GetNewState(newState, connection, Connections.ToList(), LastTriggered);
+            var scd = Logic.GetNewState(newState, connection, Connections.ToList(), LastTriggered, TimeOfLastChange);
             LastTriggered = DateTime.Now.Ticks;
+            if (scd.Any()) TimeOfLastChange = DateTime.Now.Ticks;
             return scd;
         }
     }

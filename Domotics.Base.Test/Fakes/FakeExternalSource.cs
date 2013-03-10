@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.PlatformServices;
+using System.Threading;
 
 namespace Domotics.Base.Test.Fakes
 {
@@ -42,7 +43,7 @@ namespace Domotics.Base.Test.Fakes
                                           },
                                       new Connection("lampje3", ConnectionType.Out)
                                           {
-                                              CurrentState = "out",
+                                              CurrentState = "0",
                                               AvailableStates = new List<State> { "0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100" }
                                           }
                                   };
@@ -54,37 +55,30 @@ namespace Domotics.Base.Test.Fakes
 
         public event ConnectionStateChangedEventHandler Input;
         public IEnumerable<Connection> Connections { get { return TestConnections; } }
+        
         public void SetState(Connection connection, string statename)
         {
             Debug.WriteLine("Setting: " + connection.Name + " to: " + statename);
-            Connections.First(c => c.Name == connection.Name).CurrentState = statename;
+            var con = Connections.First(c => c.Name == connection.Name);
+            con.CurrentState = statename;
         }
 
         public void FireInputEvent(string connectionName, string newstate)
         {
             var con = Connections.First(c => c.Name == connectionName);
-            if (con.Live)
-            {
-                var eventPump = Observable.Generate(
-                    con.AvailableStates.First(), 
-                    i => i == con.AvailableStates.Last(), 
-                    i => i, 
-                    i => con.CurrentState,
-                    i => TimeSpan.FromMilliseconds(10), 
-                    Scheduler.Default);
-                eventPump.Subscribe(s => OnInput(new ConnectionStateChangedEventHandlerArgs()
-                                                 {
-                                                     Connection = con,
-                                                     NewState = s
-                                                 }));
-            }
+            //con.CurrentState = newstate;
+
             OnInput(new ConnectionStateChangedEventHandlerArgs
-                        {
-                            Connection = con,
-                            NewState = newstate
-                        });
+                    {
+                        Connection = con,
+                        NewState = newstate
+                    });
+            
         }
-       
+
+        //private static Connection EventPumpConnection { get; set; }
+        //private static IObservable<State> EventPump { get; set; }
+
         private void OnInput(ConnectionStateChangedEventHandlerArgs args)
         {
             if (Input != null)

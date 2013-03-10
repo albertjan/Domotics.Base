@@ -51,9 +51,10 @@ namespace Domotics.Base
                              public IEnumerable<StateChangeDirective> GetNewState(State input, 
                                                                       Connection connection,
                                                                       List<Connection> connections, 
-                                                                      long lastTriggered)
+                                                                      long lastTriggered,
+                                                                      long timeOfLastChange)
                              { 
-                                 return new Logic(input, connection, connections, lastTriggered)." + logic + @".CollectedStateChanges;
+                                 return new Logic(input, connection, connections, lastTriggered, timeOfLastChange)." + logic + @".CollectedStateChanges;
                              }
                          }
                      }";

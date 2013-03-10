@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Threading;
 using Domotics.Base.DSL;
 using Domotics.Base.Test.Fakes;
@@ -209,10 +212,21 @@ namespace Domotics.Base.Test
         public void RuleThatEmitsAStreamOfStateChangeDirectives()
         {
             //given
-            var rule1 = new Rule(@"When(""knopje"").IsLive().Increase(""lampje3"", 10, 100, 0)", "knopje", "lampje");
+            var rule1 = new Rule(@"When(""knopje3"").IsLiveFireEvery(100).Increase(""lampje3"", 10, 100, 0)", "knopje3", "lampje3");
             Distributor.RuleStores.First().AddRule(rule1);
 
+            //when
+            var sw = new Stopwatch();
+            sw.Start();
+            var test = Observable.Generate(0, i => Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje3").CurrentState.Name != "100" , i => i + 1, i => i, i => TimeSpan.FromMilliseconds(10), TaskPoolScheduler.Default);
+            test.Subscribe(i => ((FakeExternalSource)Distributor.ExternalSources.First()).FireInputEvent("knopje3", "in"));
+            test.Wait();
+            sw.Stop();
+            Debug.WriteLine("Elapsed: " + sw.ElapsedMilliseconds);
+            ((FakeExternalSource)Distributor.ExternalSources.First()).FireInputEvent("knopje3", "out");
 
-        }
+            //then
+            Assert.AreEqual("100",  Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje3").CurrentState.Name);
+         }
     }
 }

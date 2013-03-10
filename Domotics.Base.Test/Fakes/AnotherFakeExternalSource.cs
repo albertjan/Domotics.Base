@@ -16,11 +16,11 @@ namespace Domotics.Base.Test.Fakes
                                               CurrentState = "off",
                                               AvailableStates = new List<State> { "on", "off" }
                                           },
-                                      new Connection("lampje3", ConnectionType.Out)
-                                          {
-                                              CurrentState = "off",
-                                              AvailableStates = new List<State> { "on", "off" }
-                                          },
+                                      //new Connection("lampje3", ConnectionType.Out)
+                                      //    {
+                                      //        CurrentState = "off",
+                                      //        AvailableStates = new List<State> { "on", "off" }
+                                      //    },
                                       new Connection("knopje", ConnectionType.In)
                                           {
                                               CurrentState = "out",
@@ -43,7 +43,7 @@ namespace Domotics.Base.Test.Fakes
         public IEnumerable<Connection> Connections { get { return TestConnections; } }
         public void SetState(Connection connection, string statename)
         {
-            Debug.WriteLine("Setting: " + connection.Name + " to: " + statename);
+            Debug.WriteLine(this + " Setting: " + connection.Name + " to: " + statename);
             Connections.First(c => c.Name == connection.Name).CurrentState = statename;
         }
 
