@@ -2,7 +2,9 @@
 {
     public class NCDHardwareIdentifier
     {
-        public string ID { get; set; }
+        public byte Bank { get; set; }
+
+        public byte Unit { get; set; }
 
         public HardwareEndpointType Type { get; set; }
     }

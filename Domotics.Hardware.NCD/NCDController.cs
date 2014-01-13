@@ -16,7 +16,6 @@ namespace Domotics.Hardware.NCD
         public NCDController (IExternalSource external)
         {
             External = external;
-            //Hubs = hubs;
             CurrentInputState = new Dictionary<int, IEnumerable<bool>>();
             CurrentOutputState = new Dictionary<int, IEnumerable<bool>>();
             OutputStack = new Stack<ushort>();
@@ -163,21 +162,24 @@ namespace Domotics.Hardware.NCD
 
         private static IEnumerable<bool> ParseValue(byte value)
         {
-            yield return (value & 1) > 0;
-            yield return (value & 2) > 0;
-            yield return (value & 4) > 0;
-            yield return (value & 8) > 0;
-            yield return (value & 16) > 0;
-            yield return (value & 32) > 0;
-            yield return (value & 64) > 0;
-            yield return (value & 128) > 0;
+            return new[]
+                   {
+                       (value & 1) > 0,
+                       (value & 2) > 0,
+                       (value & 4) > 0,
+                       (value & 8) > 0,
+                       (value & 16) > 0,
+                       (value & 32) > 0,
+                       (value & 64) > 0,
+                       (value & 128) > 0
+                   };
         }
 
         private Thread Input { get; set; }
 
         #endregion
 
-        private Stack<ushort> OutputStack { get; private set; }
+        private Stack<ushort> OutputStack { get; set; }
 
         private NCDComponent NCDComponent { get; set; }
 
@@ -231,38 +233,39 @@ namespace Domotics.Hardware.NCD
 
         public IEnumerable<NCDHardwareIdentifier> GetIdentifiers()
         {
-            for (var i = 0; i < BasicConfiguration.Configuration.NumberOfContactClosureBanks; i++)
+            for (byte i = 0; i < BasicConfiguration.Configuration.NumberOfContactClosureBanks; i++)
             {
-                for (var j = 0; j < 8; j++)
+                for (byte j = 0; j < 8; j++)
                 {
                     yield return new NCDHardwareIdentifier
                                      {
-                                         ID = "B" + i + ":" + j,
+                                         Bank = i,
+                                         Unit = j,
                                          Type = HardwareEndpointType.Input
                                      };
                 }
             }
             foreach (var relayBank in BasicConfiguration.Configuration.AvailableRelayBanks)
             {
-                for (var i = 0; i < relayBank.AvailableRelays; i++)
+                for (byte i = 0; i < relayBank.AvailableRelays; i++)
                 {
                     yield return new NCDHardwareIdentifier
                                      {
-                                         ID = "B" + relayBank.Number + ":" + i,
+                                         Bank = (byte) relayBank.Number,
+                                         Unit = i,
                                          Type = HardwareEndpointType.Output
                                      };
                 }
             }
         }
 
-        private static Dictionary<int, bool> SelectState(IHardwareEndpoint endpoint, IEnumerable<KeyValuePair<int, IEnumerable<bool>>> currentState)
+        private static Dictionary<int, bool> SelectState(Tuple<string, ICoupleLogic, IEnumerable<NCDHardwareIdentifier>> endpoint, IEnumerable<KeyValuePair<int, IEnumerable<bool>>> currentState)
         {
             var retval = new Dictionary<int, bool>();
-            foreach (var hardwareEndpointIndentifier in endpoint.HardwareEndpointIndentifiers)
+            foreach (var hardwareEndpointIndentifier in endpoint.Item3)
             {
-                var hwid = hardwareEndpointIndentifier.ID;
-                var bank = ushort.Parse(hwid.Substring(1, hwid.IndexOf(":") - 1));
-                var relayid = ushort.Parse(hwid.Substring(hwid.IndexOf(":") + 1));
+                var bank = hardwareEndpointIndentifier.Bank;
+                var relayid = hardwareEndpointIndentifier.Unit;
                 retval.Add(currentState.First(kv => kv.Key == bank).Key,
                            currentState.First(kv => kv.Key == bank).Value.ElementAt(relayid));
             }

@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domotics.Base;
-using Domotics.Hardware.NCD;
-
 
 namespace Domotics.Hardware.NCD
 {
-    using Couple = Tuple<string, ICoupleLogic, IEnumerable<string>>;
+    using Couple = Tuple<string, ICoupleLogic, IEnumerable<NCDHardwareIdentifier>>;
 
     public interface ICoupleLogic
     {
-        IEnumerable<NCDControlMessage> GetMessage(State state);
-        IEnumerable<State> AvailableStates { get; }
+        IEnumerable<NCDControlMessage> GetMessage(State state, IEnumerable<NCDHardwareIdentifier> ids);
     }
 
     public class Light : ICoupleLogic
     {
-        public IEnumerable<NCDControlMessage> GetMessage(State state)
+        public IEnumerable<NCDControlMessage> GetMessage(State state, IEnumerable<NCDHardwareIdentifier> ids )
         {
-            yield return new NCDControlMessage()
+            yield return new NCDControlMessage(state == "On", ids.First().Bank, ids.First().Unit);
         }
-
-        public IEnumerable<State> AvailableStates { get; set; }
     }
 
     public class NCDEndPointCouplingInformation
