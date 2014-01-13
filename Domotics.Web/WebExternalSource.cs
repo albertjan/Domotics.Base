@@ -24,6 +24,7 @@ namespace Domotics.Web
         }
 
         public event ConnectionStateChangedEventHandler Input;
+        public IObservable<ConnectionStateChangedEventHandlerArgs> StateChanges { get; private set; }
         public IEnumerable<Connection> Connections { get; private set; }
         public void SetState(Connection connection, string statename)
         {

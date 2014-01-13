@@ -40,6 +40,7 @@ namespace Domotics.Base.Test.Fakes
         public Action<Distributor> DistributorInitializationDelegate { get; private set; }
 
         public event ConnectionStateChangedEventHandler Input;
+        public IObservable<ConnectionStateChangedEventHandlerArgs> StateChanges { get; private set; }
         public IEnumerable<Connection> Connections { get { return TestConnections; } }
         public void SetState(Connection connection, string statename)
         {

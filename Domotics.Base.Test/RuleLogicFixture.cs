@@ -16,7 +16,8 @@ namespace Domotics.Base.Test
         [SetUp]
         public void Init ()
         {
-            Distributor = new Distributor(new IExternalSource[] { new FakeExternalSource(), new AnotherFakeExternalSource() }, new[] {new FakeRuleStore()});
+            Distributor = new Distributor(new IExternalSource[] { new FakeExternalSource() , new AnotherFakeExternalSource() }, new[] {new FakeRuleStore()});
+            Distributor.ExternalSources.First().StateChanges.Subscribe(e => Debug.WriteLine(e.Connection.Name + " " + e.NewState.Name));
         }
 
         private Distributor Distributor { get; set; }
@@ -218,6 +219,7 @@ namespace Domotics.Base.Test
             //when
             var sw = new Stopwatch();
             sw.Start();
+
             var test = Observable.Generate(0, i => Distributor.ExternalSources.First().Connections.First(c => c.Name == "lampje3").CurrentState.Name != "100" , i => i + 1, i => i, i => TimeSpan.FromMilliseconds(10), TaskPoolScheduler.Default);
             test.Subscribe(i => ((FakeExternalSource)Distributor.ExternalSources.First()).FireInputEvent("knopje3", "in"));
             test.Wait();

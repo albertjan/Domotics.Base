@@ -19,6 +19,11 @@ namespace Domotics.Base
         event ConnectionStateChangedEventHandler Input;
 
         /// <summary>
+        /// Obserable of all state change events
+        /// </summary>
+        IObservable<ConnectionStateChangedEventHandlerArgs> StateChanges { get; }
+
+        /// <summary>
         /// list of connections for this external source
         /// </summary>
         IEnumerable<Connection> Connections { get; }

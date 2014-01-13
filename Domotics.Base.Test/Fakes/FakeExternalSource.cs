@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.PlatformServices;
-using System.Threading;
+using System.Reactive.Disposables;
 
 namespace Domotics.Base.Test.Fakes
 {
     class FakeExternalSource : IExternalSource
     {
+
         public FakeExternalSource()
         {
             TestConnections = new List<Connection>
@@ -54,6 +53,22 @@ namespace Domotics.Base.Test.Fakes
         public Action<Distributor> DistributorInitializationDelegate { get; private set; }
 
         public event ConnectionStateChangedEventHandler Input;
+        public IObservable<ConnectionStateChangedEventHandlerArgs> StateChanges
+        {
+            get
+            {
+                return Observable.Create<ConnectionStateChangedEventHandlerArgs>(obs =>
+                {
+                    ConnectionStateChangedEventHandler handler = (sender, args) => obs.OnNext(args);
+                    Input += handler;
+                    return Disposable.Create(() =>
+                    {
+                        Input -= handler;
+                    });
+                });
+            }
+        }
+
         public IEnumerable<Connection> Connections { get { return TestConnections; } }
         
         public void SetState(Connection connection, string statename)
@@ -76,8 +91,6 @@ namespace Domotics.Base.Test.Fakes
             
         }
 
-        //private static Connection EventPumpConnection { get; set; }
-        //private static IObservable<State> EventPump { get; set; }
 
         private void OnInput(ConnectionStateChangedEventHandlerArgs args)
         {
