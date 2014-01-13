@@ -13,7 +13,7 @@ namespace Domotics.Base
         /// </summary>
         public StaticRuleStore()
         {
-            CompiledRules = new List<Rule> {new Rule("", new[] {"knopje", "lampje"})};
+            //CompiledRules = new List<Rule> {new Rule("", new[] {"knopje", "lampje"})};
         }
 
         private List<Rule> CompiledRules { get; set; }

@@ -63,6 +63,8 @@ namespace Domotics.Base
             return state.Name == Name;
         }
 
+        public string Type { get { return "test"; } }
+
         /// <inherit-doc/>
         public override int GetHashCode ()
         {

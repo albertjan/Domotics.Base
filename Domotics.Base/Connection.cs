@@ -40,7 +40,7 @@ namespace Domotics.Base
         /// </summary>
         public bool Copied { get; set; }
 /*
- *      Don't know if this is necessairy. It's not logical to have connections with conflicting names.
+        Don't know if this is necessairy. It's not logical to have connections with conflicting names.
         /// <summary>
         /// unique identifier
         /// </summary>

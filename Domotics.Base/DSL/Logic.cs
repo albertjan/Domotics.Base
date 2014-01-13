@@ -6,13 +6,6 @@ using System.Linq;
 
 namespace Domotics.Base.DSL
 {
-    //Item1 = The connection that caused the rule to fire
-    //Item2 = The new state
-    //Item3 = A bool that causes the rule to return null when set to false. i.e. no change.
-    //Item4 = LastTriggered in ticks.
-    //Item5 = The connection whos state is to change
-    using ConnectionState = Tuple<Connection, State, bool, IEnumerable<Connection>, long, Connection>;
-
     /// <summary>
     /// The base for the user rule stories
     /// </summary>
@@ -25,6 +18,7 @@ namespace Domotics.Base.DSL
         private long TimeOfLastChange { get; set; }
         private Connection AffectedConnection { get; set; }
         private bool ShouldContinue { get; set; }
+
         /// <summary>
         /// The StateChangeDirectives collected by the rule.
         /// </summary>
@@ -91,7 +85,7 @@ namespace Domotics.Base.DSL
                                          ") on is not listed in the connections (" +
                                          Connections.Aggregate("", ((s, c) => s + "," + c.Name)) + ").");
 
-            ShouldContinue = Connection.Name == connectionName ^ ShouldContinue;
+            ShouldContinue = (Connection.Name == connectionName) ^ ShouldContinue;
 
             return this;
         }
@@ -225,8 +219,7 @@ namespace Domotics.Base.DSL
                 var selectedConnection = Connections.FirstOrDefault(c => c.Name == which);
                 if (selectedConnection == null)
                     throw new LogicException("Connection this rule should fire (" + which + ") on is not listed in the connections (" + Connections.Aggregate("", ((s, c) => s + c.Name + ",")) + ").");
-
-               
+            
                 var cur = int.Parse(selectedConnection.CurrentState.Name);
 
                 CollectedStateChanges.Add(new StateChangeDirective
@@ -271,8 +264,6 @@ namespace Domotics.Base.DSL
 
             return this;
         }
-
-        
     }
 
     /// <summary>

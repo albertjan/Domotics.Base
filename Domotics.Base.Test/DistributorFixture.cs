@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Domotics.Base.Test.Fakes;
 using NUnit.Framework;
@@ -75,6 +76,14 @@ namespace Domotics.Base.Test
             //then
             Assert.IsTrue(Distributor.RuleStores.First().Rules.Count() == 1);
             Assert.IsTrue(Distributor.RuleStores.First().Rules.First().Connections.Count() == 2);
+        }
+
+        [Test]
+        public void ShouldHaveAPathToTheCompiledAssembly()
+        {
+            var ruleLogic = RuleLogicCompiler.Compile(@"When(""knopje"").IsPushed().Switch(""lampje"")");
+            Assert.IsNotNullOrEmpty(ruleLogic.Path);
+            Assert.IsTrue(File.Exists(ruleLogic.Path));
         }
 
         [Test]

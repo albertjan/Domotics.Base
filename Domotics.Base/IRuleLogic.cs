@@ -21,5 +21,15 @@ namespace Domotics.Base
                                                       List<Connection> connections,
                                                       long lastTriggered, 
                                                       long timetimeOfLastChange);
+
+        /// <summary>
+        /// Contains the path the the compiled assembly
+        /// </summary>
+        string Path { get; set; }
+
+        /// <summary>
+        /// Contains the string that is compiled.
+        /// </summary>
+        string Logic { get; }
     }
 }

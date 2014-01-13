@@ -56,20 +56,32 @@ namespace Domotics.Base
                              { 
                                  return new Logic(input, connection, connections, lastTriggered, timeOfLastChange)." + logic + @".CollectedStateChanges;
                              }
+
+                             public string Path { get; set; }
+
+                             public string Logic 
+                             { 
+                                 get 
+                                 {
+                                     return """ + logic.Replace("\"", "\\\"") + @""";
+                                 } 
+                             }
                          }
-                     }";
+                     }
+                     ";
 
             var cp = new CompilerParameters
                          {
                              GenerateInMemory = false,
                              GenerateExecutable = false,
-                             IncludeDebugInformation = true,
                              OutputAssembly = Path.GetRandomFileName ().Replace (".", "") + ".dll"
                          };
 
             cp.ReferencedAssemblies.Add ("Domotics.Base.dll");
             cp.ReferencedAssemblies.Add ("mscorlib.dll");
-
+#if DEBUG
+            cp.IncludeDebugInformation = true;
+#endif
             var cdp = CodeDomProvider.CreateProvider ("CSharp").CompileAssemblyFromSource (cp, new[] { rl });
             
             var ass = cdp.CompiledAssembly;
@@ -77,6 +89,8 @@ namespace Domotics.Base
             var irl = ass.GetTypes().First(t => t.GetInterfaces().Contains(typeof (IRuleLogic)));
 
             CompiledStories.Add(logic, (IRuleLogic)Activator.CreateInstance(irl));
+
+            CompiledStories[logic].Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cdp.PathToAssembly);
 
             return CompiledStories[logic];
         }
