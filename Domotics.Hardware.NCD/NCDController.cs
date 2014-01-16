@@ -1,28 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using Domotics.Base;
-using NCD;
+﻿using NCD;
 
 namespace Domotics.Hardware.NCD
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using Base;
+
+    using Couple = System.Tuple<Base.Connection, ICoupleLogic, System.Collections.Generic.List<NCDHardwareIdentifier>>;
+    
     public class NCDController : IDisposable
     {
-        private IExternalSource External { get; set; }
+        private List<Couple> _endpointCouples;
+        private Dictionary<Tuple<byte, byte>, Couple> EndpointCoupleDictionary { get; set; }
+        private NCDExternalSource External { get; set; }
 
         public NCDController (IExternalSource external)
         {
-            External = external;
-            CurrentInputState = new Dictionary<int, IEnumerable<bool>>();
-            CurrentOutputState = new Dictionary<int, IEnumerable<bool>>();
+            External = (NCDExternalSource) external;
+            CurrentInputState = new Dictionary<byte, IEnumerable<bool>>();
+            CurrentOutputState = new Dictionary<byte, IEnumerable<bool>>();
             OutputStack = new Stack<ushort>();
             InputStack = new Stack<ushort>();
+            EndpointCoupleDictionary = new Dictionary<Tuple<byte, byte>, Couple>();
         }
 
         #region Controllerthread
+        
+        public List<Couple> EndpointCouples
+        {
+            get { return _endpointCouples; }
+            set
+            {
+                _endpointCouples = value;
+                EndpointCoupleDictionary.Clear();
+                foreach (var tuple in value)
+                {
+                    foreach (var ncdHardwareIdentifier in tuple.Item3)
+                    {
+                        EndpointCoupleDictionary.Add(
+                            Tuple.Create(ncdHardwareIdentifier.Bank, ncdHardwareIdentifier.Unit), tuple);
+                    }
+                }
+            }
+        }
 
         private static void Runner (object ncdController)
         {
@@ -100,7 +124,7 @@ namespace Domotics.Hardware.NCD
                     if (controller.InputStack.Count > 0)
                     {
                         var val = controller.InputStack.Pop();
-                        var bank = (val & 0xFF00) >> 8;
+                        var bank = (byte)((val & 0xFF00) >> 8);
                         var value = (byte)(val & 0x00FF);
                         controller.ReportInputStates(bank, ParseValue(value));
                     }   
@@ -113,20 +137,20 @@ namespace Domotics.Hardware.NCD
             }
         }
 
-        private IDictionary<int, IEnumerable<bool>> CurrentInputState { get; set; }
+        private IDictionary<byte, IEnumerable<bool>> CurrentInputState { get; set; }
 
-        private IDictionary<int, IEnumerable<bool>> CurrentOutputState { get; set; }
+        private IDictionary<byte, IEnumerable<bool>> CurrentOutputState { get; set; }
 
-        private void ReportOutputStates (int bank, IEnumerable<bool> states)
+        private void ReportOutputStates (byte bank, IEnumerable<bool> states)
         {
             if (CurrentOutputState.ContainsKey (bank))
             {
                 var curBankState = CurrentOutputState[bank].ToList();
                 var inpState = states.ToList();
 
-                for (var i = 0; i < 8; i++)
+                for (byte i = 0; i < 8; i++)
                 {
-                    if (curBankState.ElementAt(i) != inpState.ElementAt(i))
+                    if (curBankState[i] != inpState[i])
                     {
                         CurrentOutputState[bank] = inpState;
                     }
@@ -138,19 +162,36 @@ namespace Domotics.Hardware.NCD
             }
         }
 
-        private void ReportInputStates (int bank, IEnumerable<bool> states)
+        private void ReportInputStates (byte bank, IEnumerable<bool> states)
         {
             if (CurrentInputState.ContainsKey(bank))
             {
-                var curBankState = CurrentInputState[bank].ToList();
-                var inputState = states.ToList();
+                var curBankState = CurrentInputState[bank].ToArray();
+                var inputState = states.ToArray();
 
-                for (var i = 0; i < 8; i++)
+                for (byte i = 0; i < 8; i++)
                 {
-                    if (curBankState.ElementAt(i) != inputState.ElementAt(i))
+                    var tuple = Tuple.Create(bank, i);
+
+                    if (!EndpointCoupleDictionary.ContainsKey(tuple)) continue;
+                    
+                    var couple = EndpointCoupleDictionary[tuple];
+
+                    if (!couple.Item1.Live)
                     {
-                        CurrentInputState[bank] = inputState;
-                        //fire input event
+                        if (curBankState[i] != inputState[i])
+                        {
+                            CurrentInputState[bank] = inputState;
+                        }
+                        External.FireInputEvent(couple.Item1.Name, inputState[i] ? "In" : "Out");
+                    }
+                    else
+                    {
+                        if (curBankState[i] != inputState[i])
+                        {
+                            CurrentInputState[bank] = inputState;
+                            External.FireInputEvent(couple.Item1.Name, inputState[i] ? "In" : "Out");
+                        }
                     }
                 }
             }
@@ -198,38 +239,24 @@ namespace Domotics.Hardware.NCD
                 BasicConfiguration.Save();
                 throw new Exception("EmptyConfigurationException, Please fill the configuration with the right information and start again.");
             }
+            
             NCDComponent = new NCDComponent {BaudRate = 38400, PortName = BasicConfiguration.Configuration.Comport};
-            //ncdComponent.Port = 1;
             NCDComponent.OpenPort();
             if (!NCDComponent.IsOpen) throw new Exception("Can't open port");
 
-            //On boot load all the states into the outputendpoints via the state mapper. 
-            //Select the hardware states and report those IN ORDER  to the endpoint state mapper.
-            //To get the current state.
-
             //-------Output states
-            var outputState = NCDComponent.ProXR.RelayBanks.GetRelaysStatusInAllBanks ().Take (BasicConfiguration.Configuration.AvailableRelayBanks.Count).ToList ();
-            for (var bank = 0; bank < outputState.Count (); bank++)
+            var outputState = NCDComponent.ProXR.RelayBanks.GetRelaysStatusInAllBanks();
+            
+            for (byte bank = 0; bank < BasicConfiguration.Configuration.AvailableRelayBanks.Count; bank++)
             {
-                ReportOutputStates (bank + 1, ParseValue (outputState[bank]));
+                ReportOutputStates (bank, ParseValue (outputState[bank]));
             }
-        }
 
-        //private void WaitForState()
-        //{
-        //    while (CurrentOutputState.Count == 0 || CurrentInputState.Count == 0) Thread.Sleep(100);
-        //}
-
-        public void Start()
-        {
             Run = new Thread(Runner);
             Run.Start(this);
             Input = new Thread(InputRunner);
             Input.Start(this);
         }
-
-
-        private NCDEndPointCouplingInformation CouplingInformation { get; set; }
 
         public IEnumerable<NCDHardwareIdentifier> GetIdentifiers()
         {
@@ -241,7 +268,7 @@ namespace Domotics.Hardware.NCD
                                      {
                                          Bank = i,
                                          Unit = j,
-                                         Type = HardwareEndpointType.Input
+                                         Type = ConnectionType.In
                                      };
                 }
             }
@@ -253,21 +280,20 @@ namespace Domotics.Hardware.NCD
                                      {
                                          Bank = (byte) relayBank.Number,
                                          Unit = i,
-                                         Type = HardwareEndpointType.Output
+                                         Type = ConnectionType.Out
                                      };
                 }
             }
         }
 
-        private static Dictionary<int, bool> SelectState(Tuple<string, ICoupleLogic, IEnumerable<NCDHardwareIdentifier>> endpoint, IEnumerable<KeyValuePair<int, IEnumerable<bool>>> currentState)
+        private static Dictionary<int, bool> SelectState(Couple endpoint, Dictionary<int, List<bool>> currentState)
         {
             var retval = new Dictionary<int, bool>();
             foreach (var hardwareEndpointIndentifier in endpoint.Item3)
             {
                 var bank = hardwareEndpointIndentifier.Bank;
                 var relayid = hardwareEndpointIndentifier.Unit;
-                retval.Add(currentState.First(kv => kv.Key == bank).Key,
-                           currentState.First(kv => kv.Key == bank).Value.ElementAt(relayid));
+                retval.Add(bank, currentState[bank][relayid]);
             }
             return retval;
         } 
@@ -278,10 +304,5 @@ namespace Domotics.Hardware.NCD
             Run.Abort();
             Input.Abort();
         }
-    }
-
-    public enum HardwareEndpointType
-    {
-        Input, Output
     }
 }

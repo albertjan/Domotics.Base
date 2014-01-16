@@ -5,7 +5,7 @@ namespace Domotics.Hardware.NCD
     [Serializable]
     public class RelayBank
     {
-        public int Number { get; set; }
-        public int AvailableRelays { get; set; }
+        public byte Number { get; set; }
+        public byte AvailableRelays { get; set; }
     }
 }

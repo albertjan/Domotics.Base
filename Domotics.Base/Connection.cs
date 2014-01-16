@@ -30,7 +30,7 @@ namespace Domotics.Base
         /// <summary>
         /// Name of the connection
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Specifies wether or not this connection can be resolved. When it is set to true

@@ -1,4 +1,6 @@
-﻿namespace Domotics.Hardware.NCD
+﻿using Domotics.Base;
+
+namespace Domotics.Hardware.NCD
 {
     public class NCDHardwareIdentifier
     {
@@ -6,6 +8,6 @@
 
         public byte Unit { get; set; }
 
-        public HardwareEndpointType Type { get; set; }
+        public ConnectionType Type { get; set; }
     }
-}
+}  
