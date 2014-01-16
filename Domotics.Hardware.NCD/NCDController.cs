@@ -1,7 +1,7 @@
-﻿using NCD;
-
-namespace Domotics.Hardware.NCD
+﻿namespace Domotics.Hardware.NCD
 {
+    using global::NCD;
+
     using System;
     using System.Collections.Generic;
     using System.Configuration;
@@ -14,7 +14,7 @@ namespace Domotics.Hardware.NCD
     
     public class NCDController : IDisposable
     {
-        private List<Couple> _endpointCouples;
+        private List<Couple> _endpointCouples; 
         private Dictionary<Tuple<byte, byte>, Couple> EndpointCoupleDictionary { get; set; }
         private NCDExternalSource External { get; set; }
 
@@ -297,6 +297,17 @@ namespace Domotics.Hardware.NCD
             }
             return retval;
         } 
+
+        public void SetState(Connection connection, State state)
+        {
+            var couple = EndpointCouples.FirstOrDefault(e => e.Item1 == connection);
+            if (couple == null) return;
+            
+            foreach (var ncdControlMessage in couple.Item2.GetMessages(state, couple.Item3))
+            {
+                OutputStack.Push(ncdControlMessage.GetMessage());
+            }
+        }
 
         public void Dispose()
         {
