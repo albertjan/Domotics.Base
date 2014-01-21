@@ -240,7 +240,7 @@
                 throw new Exception("EmptyConfigurationException, Please fill the configuration with the right information and start again.");
             }
             
-            NCDComponent = new NCDComponent {BaudRate = 38400, PortName = BasicConfiguration.Configuration.Comport};
+            NCDComponent = new NCDComponent { BaudRate = 38400, PortName = BasicConfiguration.Configuration.Comport };
             NCDComponent.OpenPort();
             if (!NCDComponent.IsOpen) throw new Exception("Can't open port");
 

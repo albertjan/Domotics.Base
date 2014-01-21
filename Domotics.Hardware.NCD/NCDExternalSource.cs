@@ -27,7 +27,7 @@ namespace Domotics.Hardware.NCD
 
         public void SetState(Connection connectionid, string statename)
         {
-            controller.SetState(connectionid, (State)statename`);
+            controller.SetState(connectionid, (State)statename);
         }
 
         public void FireInputEvent(string connectionName, string newstate)
