@@ -10,7 +10,7 @@
     using System.Threading;
     using Base;
 
-    using Couple = System.Tuple<Base.Connection, ICoupleLogic, System.Collections.Generic.List<NCDHardwareIdentifier>>;
+    using Couple = System.Tuple<Base.Connection, CoupleLogic.ICoupleLogic, System.Collections.Generic.List<NCDHardwareIdentifier>>;
     
     public class NCDController : IDisposable
     {
