@@ -10,7 +10,8 @@ namespace Domotics.Hardware.NCD.CoupleLogic
 
         public IEnumerable<NCDControlMessage> GetMessages(State state, IEnumerable<NCDHardwareIdentifier> ids )
         {
-            yield return new NCDControlMessage(state == "On", ids.First().Bank, ids.First().Unit);
+            var ncdHardwareIdentifiers = ids as NCDHardwareIdentifier[] ?? ids.ToArray();
+            yield return new NCDControlMessage(state == "On", ncdHardwareIdentifiers[0].Bank, ncdHardwareIdentifiers[0].Unit);
         }
     }
 }
