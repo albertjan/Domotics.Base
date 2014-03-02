@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-
-namespace Domotics.Base.DSL
+﻿namespace Domotics.Base.DSL
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Linq;
+
     /// <summary>
     /// The base for the user rule stories
     /// </summary>

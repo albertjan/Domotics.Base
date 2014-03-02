@@ -48,7 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicConfiguration.cs" />
-    <Compile Include="ICoupleLogic.cs" />
+    <Compile Include="CoupleLogic\16StateDimmer.cs" />
+    <Compile Include="CoupleLogic\ICoupleLogic.cs" />
     <Compile Include="NCDController.cs" />
     <Compile Include="NCDControlMessage.cs" />
     <Compile Include="CoupleLogic\Light.cs" />
