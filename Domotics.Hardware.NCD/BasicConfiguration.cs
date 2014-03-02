@@ -20,7 +20,7 @@ namespace Domotics.Hardware.NCD
         [XmlIgnore]
         public string Path
         {
-            get {
+            private get {
                 return string.IsNullOrWhiteSpace(_path) ? "BasicConfiguration.config" : _path;
             }
             set { _path = value; }

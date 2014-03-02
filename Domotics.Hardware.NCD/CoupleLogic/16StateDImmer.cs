@@ -115,7 +115,7 @@
                 yield return new NCDControlMessage(false, id[2].Bank, id[2].Unit);
                 yield return new NCDControlMessage(false, id[3].Bank, id[3].Unit);
             }
-            else if (state == "81.25%")
+            else if (state == "86.66%")
             {
                 //1101 86 2/3
                 yield return new NCDControlMessage(true, id[0].Bank, id[0].Unit);
@@ -123,7 +123,7 @@
                 yield return new NCDControlMessage(false, id[2].Bank, id[2].Unit);
                 yield return new NCDControlMessage(true, id[3].Bank, id[3].Unit);
             }
-            else if (state == "87.5%")
+            else if (state == "93.33%")
             {
                 //1110 93 1/3
                 yield return new NCDControlMessage(true, id[0].Bank, id[0].Unit);
